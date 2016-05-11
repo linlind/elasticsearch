@@ -25,13 +25,10 @@ import org.elasticsearch.common.lease.Releasables;
 import org.elasticsearch.common.util.BigArrays;
 import org.elasticsearch.common.util.ObjectArray;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.internal.SearchContext.Lifetime;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public abstract class AggregatorFactory<AF extends AggregatorFactory<AF>> {
 
@@ -39,7 +36,6 @@ public abstract class AggregatorFactory<AF extends AggregatorFactory<AF>> {
     protected final Type type;
     protected final AggregatorFactory<?> parent;
     protected final AggregatorFactories factories;
-    protected final Map<String, Object> metaData;
     protected final AggregationContext context;
 
     /**
@@ -53,13 +49,12 @@ public abstract class AggregatorFactory<AF extends AggregatorFactory<AF>> {
      *             if an error occurs creating the factory
      */
     public AggregatorFactory(String name, Type type, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         this.name = name;
         this.type = type;
         this.context = context;
         this.parent = parent;
         this.factories = subFactoriesBuilder.build(context, this);
-        this.metaData = metaData;
     }
 
     public String name() {
@@ -78,8 +73,7 @@ public abstract class AggregatorFactory<AF extends AggregatorFactory<AF>> {
     public void doValidate() {
     }
 
-    protected abstract Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException;
+    protected abstract Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException;
 
     /**
      * Creates the aggregator
@@ -96,7 +90,7 @@ public abstract class AggregatorFactory<AF extends AggregatorFactory<AF>> {
      * @return The created aggregator
      */
     public final Aggregator create(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
-        return createInternal(parent, collectsFromSingleBucket, this.factories.createPipelineAggregators(), this.metaData);
+        return createInternal(parent, collectsFromSingleBucket);
     }
 
     public String getType() {

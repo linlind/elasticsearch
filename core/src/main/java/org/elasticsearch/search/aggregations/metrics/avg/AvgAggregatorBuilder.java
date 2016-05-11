@@ -58,7 +58,7 @@ public class AvgAggregatorBuilder extends ValuesSourceAggregatorBuilder.LeafOnly
     @Override
     protected AvgAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new AvgAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder, metaData);
+        return new AvgAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class NestedAggregatorBuilder extends AggregatorBuilder<NestedAggregatorB
     @Override
     protected AggregatorFactory<?> doBuild(AggregationContext context, AggregatorFactory<?> parent, Builder subFactoriesBuilder)
             throws IOException {
-        return new NestedAggregatorFactory(name, type, path, context, parent, subFactoriesBuilder, metaData);
+        return new NestedAggregatorFactory(name, type, path, context, parent, subFactoriesBuilder);
     }
 
     @Override

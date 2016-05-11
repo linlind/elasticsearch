@@ -31,13 +31,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -50,9 +47,8 @@ public class MinAggregator extends NumericMetricsAggregator.SingleValue {
     DoubleArray mins;
 
     public MinAggregator(String name, ValuesSource.Numeric valuesSource, DocValueFormat formatter,
-            AggregationContext context, Aggregator parent, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
-        super(name, context, parent, pipelineAggregators, metaData);
+            AggregationContext context, Aggregator parent) throws IOException {
+        super(name, context, parent);
         this.valuesSource = valuesSource;
         if (valuesSource != null) {
             mins = context.bigArrays().newDoubleArray(1, false);
@@ -106,12 +102,12 @@ public class MinAggregator extends NumericMetricsAggregator.SingleValue {
         if (valuesSource == null || bucket >= mins.size()) {
             return buildEmptyAggregation();
         }
-        return new InternalMin(name, mins.get(bucket), format, pipelineAggregators(), metaData());
+        return new InternalMin(name, mins.get(bucket), format);
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalMin(name, Double.POSITIVE_INFINITY, format, pipelineAggregators(), metaData());
+        return new InternalMin(name, Double.POSITIVE_INFINITY, format);
     }
 
     @Override

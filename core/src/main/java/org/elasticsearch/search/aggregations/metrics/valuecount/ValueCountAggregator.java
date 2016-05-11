@@ -28,13 +28,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A field data based aggregator that counts the number of values a specific field has within the aggregation context.
@@ -49,11 +46,9 @@ public class ValueCountAggregator extends NumericMetricsAggregator.SingleValue {
     // a count per bucket
     LongArray counts;
 
-    public ValueCountAggregator(String name, ValuesSource valuesSource,
-            AggregationContext aggregationContext, Aggregator parent, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData)
+    public ValueCountAggregator(String name, ValuesSource valuesSource, AggregationContext aggregationContext, Aggregator parent)
             throws IOException {
-        super(name, aggregationContext, parent, pipelineAggregators, metaData);
+        super(name, aggregationContext, parent);
         this.valuesSource = valuesSource;
         if (valuesSource != null) {
             counts = context.bigArrays().newLongArray(1, true);
@@ -90,12 +85,12 @@ public class ValueCountAggregator extends NumericMetricsAggregator.SingleValue {
         if (valuesSource == null || bucket >= counts.size()) {
             return buildEmptyAggregation();
         }
-        return new InternalValueCount(name, counts.get(bucket), pipelineAggregators(), metaData());
+        return new InternalValueCount(name, counts.get(bucket));
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalValueCount(name, 0L, pipelineAggregators(), metaData());
+        return new InternalValueCount(name, 0L);
     }
 
     @Override

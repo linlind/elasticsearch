@@ -25,11 +25,8 @@ import org.elasticsearch.search.DocValueFormat;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
 *
@@ -56,9 +53,8 @@ public class InternalAvg extends InternalNumericMetricsAggregation.SingleValue i
 
     InternalAvg() {} // for serialization
 
-    public InternalAvg(String name, double sum, long count, DocValueFormat format, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalAvg(String name, double sum, long count, DocValueFormat format) {
+        super(name);
         this.sum = sum;
         this.count = count;
         this.format = format;
@@ -87,7 +83,7 @@ public class InternalAvg extends InternalNumericMetricsAggregation.SingleValue i
             count += ((InternalAvg) aggregation).count;
             sum += ((InternalAvg) aggregation).sum;
         }
-        return new InternalAvg(getName(), sum, count, format, pipelineAggregators(), getMetaData());
+        return new InternalAvg(getName(), sum, count, format);
     }
 
     @Override

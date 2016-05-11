@@ -21,7 +21,6 @@ package org.elasticsearch.search.aggregations;
 import org.apache.lucene.index.LeafReaderContext;
 import org.elasticsearch.search.aggregations.bucket.BestBucketsDeferringCollector;
 import org.elasticsearch.search.aggregations.bucket.DeferringBucketCollector;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.internal.SearchContext.Lifetime;
 import org.elasticsearch.search.query.QueryPhaseExecutionException;
@@ -40,14 +39,12 @@ public abstract class AggregatorBase extends Aggregator {
     protected final String name;
     protected final Aggregator parent;
     protected final AggregationContext context;
-    private final Map<String, Object> metaData;
 
     protected final Aggregator[] subAggregators;
     protected BucketCollector collectableSubAggregators;
 
     private Map<String, Aggregator> subAggregatorbyName;
     private DeferringBucketCollector recordingWrapper;
-    private final List<PipelineAggregator> pipelineAggregators;
 
     /**
      * Constructs a new Aggregator.
@@ -56,13 +53,9 @@ public abstract class AggregatorBase extends Aggregator {
      * @param factories             The factories for all the sub-aggregators under this aggregator
      * @param context               The aggregation context
      * @param parent                The parent aggregator (may be {@code null} for top level aggregators)
-     * @param metaData              The metaData associated with this aggregator
      */
-    protected AggregatorBase(String name, AggregatorFactories factories, AggregationContext context, Aggregator parent,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+    protected AggregatorBase(String name, AggregatorFactories factories, AggregationContext context, Aggregator parent) throws IOException {
         this.name = name;
-        this.pipelineAggregators = pipelineAggregators;
-        this.metaData = metaData;
         this.parent = parent;
         this.context = context;
         assert factories != null : "sub-factories provided to BucketAggregator must not be null, use AggragatorFactories.EMPTY instead";
@@ -110,14 +103,6 @@ public abstract class AggregatorBase extends Aggregator {
             }
         }
         return false;
-    }
-
-    public Map<String, Object> metaData() {
-        return this.metaData;
-    }
-
-    public List<PipelineAggregator> pipelineAggregators() {
-        return this.pipelineAggregators;
     }
 
     /**

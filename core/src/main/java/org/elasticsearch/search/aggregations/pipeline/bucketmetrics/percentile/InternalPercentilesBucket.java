@@ -29,8 +29,6 @@ import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggre
 import org.elasticsearch.search.aggregations.metrics.max.InternalMax;
 import org.elasticsearch.search.aggregations.metrics.percentiles.InternalPercentile;
 import org.elasticsearch.search.aggregations.metrics.percentiles.Percentile;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -60,21 +58,21 @@ public class InternalPercentilesBucket extends InternalNumericMetricsAggregation
     protected InternalPercentilesBucket() {
     } // for serialization
 
-    public InternalPercentilesBucket(String name, double[] percents, double[] percentiles,
-                                     DocValueFormat formatter, List<PipelineAggregator> pipelineAggregators,
-                                     Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalPercentilesBucket(String name, double[] percents, double[] percentiles, DocValueFormat formatter,
+            Map<String, Object> metaData) {
+        super(name);
         this.format = formatter;
         this.percentiles = percentiles;
         this.percents = percents;
+        this.metaData = metaData;
     }
 
     @Override
     public double percentile(double percent) throws IllegalArgumentException {
         int index = Arrays.binarySearch(percents, percent);
         if (index < 0) {
-            throw new IllegalArgumentException("Percent requested [" + String.valueOf(percent) + "] was not" +
-                    " one of the computed percentiles.  Available keys are: " + Arrays.toString(percents));
+            throw new IllegalArgumentException("Percent requested [" + String.valueOf(percent) + "] was not"
+                    + " one of the computed percentiles.  Available keys are: " + Arrays.toString(percents));
         }
         return percentiles[index];
     }

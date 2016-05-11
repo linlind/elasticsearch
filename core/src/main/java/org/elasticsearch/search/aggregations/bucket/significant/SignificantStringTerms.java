@@ -28,8 +28,6 @@ import org.elasticsearch.search.aggregations.InternalAggregations;
 import org.elasticsearch.search.aggregations.bucket.BucketStreamContext;
 import org.elasticsearch.search.aggregations.bucket.BucketStreams;
 import org.elasticsearch.search.aggregations.bucket.significant.heuristics.SignificanceHeuristic;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,10 +157,8 @@ public class SignificantStringTerms extends InternalSignificantTerms<Significant
     SignificantStringTerms() {} // for serialization
 
     public SignificantStringTerms(long subsetSize, long supersetSize, String name, int requiredSize, long minDocCount,
-            SignificanceHeuristic significanceHeuristic, List<? extends InternalSignificantTerms.Bucket> buckets,
-            List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(subsetSize, supersetSize, name, requiredSize, minDocCount, significanceHeuristic, buckets, pipelineAggregators, metaData);
+            SignificanceHeuristic significanceHeuristic, List<? extends InternalSignificantTerms.Bucket> buckets) {
+        super(subsetSize, supersetSize, name, requiredSize, minDocCount, significanceHeuristic, buckets);
     }
 
     @Override
@@ -173,7 +169,7 @@ public class SignificantStringTerms extends InternalSignificantTerms<Significant
     @Override
     public SignificantStringTerms create(List<SignificantStringTerms.Bucket> buckets) {
         return new SignificantStringTerms(this.subsetSize, this.supersetSize, this.name, this.requiredSize, this.minDocCount,
-                this.significanceHeuristic, buckets, this.pipelineAggregators(), this.metaData);
+                this.significanceHeuristic, buckets);
     }
 
     @Override
@@ -186,7 +182,7 @@ public class SignificantStringTerms extends InternalSignificantTerms<Significant
     protected SignificantStringTerms create(long subsetSize, long supersetSize, List<InternalSignificantTerms.Bucket> buckets,
             InternalSignificantTerms prototype) {
         return new SignificantStringTerms(subsetSize, supersetSize, prototype.getName(), prototype.requiredSize, prototype.minDocCount,
-                prototype.significanceHeuristic, buckets, prototype.pipelineAggregators(), prototype.getMetaData());
+                prototype.significanceHeuristic, buckets);
     }
 
     @Override

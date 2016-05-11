@@ -31,13 +31,10 @@ import org.elasticsearch.search.aggregations.Aggregator;
 import org.elasticsearch.search.aggregations.AggregatorFactories;
 import org.elasticsearch.search.aggregations.bucket.BestDocsDeferringCollector;
 import org.elasticsearch.search.aggregations.bucket.DeferringBucketCollector;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class DiversifiedOrdinalsSamplerAggregator extends SamplerAggregator {
 
@@ -45,9 +42,9 @@ public class DiversifiedOrdinalsSamplerAggregator extends SamplerAggregator {
     private int maxDocsPerValue;
 
     public DiversifiedOrdinalsSamplerAggregator(String name, int shardSize, AggregatorFactories factories,
-            AggregationContext aggregationContext, Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData,
-            ValuesSource.Bytes.WithOrdinals.FieldData valuesSource, int maxDocsPerValue) throws IOException {
-        super(name, shardSize, factories, aggregationContext, parent, pipelineAggregators, metaData);
+            AggregationContext aggregationContext, Aggregator parent, ValuesSource.Bytes.WithOrdinals.FieldData valuesSource,
+            int maxDocsPerValue) throws IOException {
+        super(name, shardSize, factories, aggregationContext, parent);
         this.valuesSource = valuesSource;
         this.maxDocsPerValue = maxDocsPerValue;
     }

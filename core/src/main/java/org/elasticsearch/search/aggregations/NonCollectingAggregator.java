@@ -20,12 +20,9 @@
 package org.elasticsearch.search.aggregations;
 
 import org.apache.lucene.index.LeafReaderContext;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * An aggregator that is not collected, this can typically be used when running an aggregation over a field that doesn't have
@@ -33,14 +30,13 @@ import java.util.Map;
  */
 public abstract class NonCollectingAggregator extends AggregatorBase {
 
-    protected NonCollectingAggregator(String name, AggregationContext context, Aggregator parent, AggregatorFactories subFactories,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        super(name, subFactories, context, parent, pipelineAggregators, metaData);
+    protected NonCollectingAggregator(String name, AggregationContext context, Aggregator parent, AggregatorFactories subFactories)
+            throws IOException {
+        super(name, subFactories, context, parent);
     }
 
-    protected NonCollectingAggregator(String name, AggregationContext context, Aggregator parent,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        this(name, context, parent, AggregatorFactories.EMPTY, pipelineAggregators, metaData);
+    protected NonCollectingAggregator(String name, AggregationContext context, Aggregator parent) throws IOException {
+        this(name, context, parent, AggregatorFactories.EMPTY);
     }
 
     @Override

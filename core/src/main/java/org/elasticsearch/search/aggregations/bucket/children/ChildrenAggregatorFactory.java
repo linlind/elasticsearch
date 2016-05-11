@@ -26,7 +26,6 @@ import org.elasticsearch.search.aggregations.AggregatorFactory;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.NonCollectingAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 import org.elasticsearch.search.aggregations.support.ValuesSource.Bytes.ParentChild;
@@ -34,8 +33,6 @@ import org.elasticsearch.search.aggregations.support.ValuesSourceAggregatorFacto
 import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class ChildrenAggregatorFactory
         extends ValuesSourceAggregatorFactory<ValuesSource.Bytes.WithOrdinals.ParentChild, ChildrenAggregatorFactory> {
@@ -45,22 +42,21 @@ public class ChildrenAggregatorFactory
     private final Query childFilter;
 
     public ChildrenAggregatorFactory(String name, Type type, ValuesSourceConfig<ParentChild> config, String parentType, Query childFilter,
-            Query parentFilter, AggregationContext context, AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder,
-            Map<String, Object> metaData) throws IOException {
-        super(name, type, config, context, parent, subFactoriesBuilder, metaData);
+            Query parentFilter, AggregationContext context, AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder)
+            throws IOException {
+        super(name, type, config, context, parent, subFactoriesBuilder);
         this.parentType = parentType;
         this.childFilter = childFilter;
         this.parentFilter = parentFilter;
     }
 
     @Override
-    protected Aggregator createUnmapped(Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-            throws IOException {
-        return new NonCollectingAggregator(name, context, parent, pipelineAggregators, metaData) {
+    protected Aggregator createUnmapped(Aggregator parent) throws IOException {
+        return new NonCollectingAggregator(name, context, parent) {
 
             @Override
             public InternalAggregation buildEmptyAggregation() {
-                return new InternalChildren(name, 0, buildEmptySubAggregations(), pipelineAggregators(), metaData());
+                return new InternalChildren(name, 0, buildEmptySubAggregations());
             }
 
         };
@@ -68,11 +64,10 @@ public class ChildrenAggregatorFactory
 
     @Override
     protected Aggregator doCreateInternal(ValuesSource.Bytes.WithOrdinals.ParentChild valuesSource, Aggregator parent,
-            boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-                    throws IOException {
+            boolean collectsFromSingleBucket) throws IOException {
         long maxOrd = valuesSource.globalMaxOrd(context.searchContext().searcher(), parentType);
-        return new ParentToChildrenAggregator(name, factories, context, parent, parentType, childFilter, parentFilter, valuesSource, maxOrd,
-                pipelineAggregators, metaData);
+        return new ParentToChildrenAggregator(name, factories, context, parent, parentType, childFilter, parentFilter, valuesSource,
+                maxOrd);
     }
 
 }

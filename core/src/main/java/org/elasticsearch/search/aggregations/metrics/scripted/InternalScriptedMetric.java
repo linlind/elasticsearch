@@ -29,8 +29,6 @@ import org.elasticsearch.script.ScriptContext;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,12 +59,12 @@ public class InternalScriptedMetric extends InternalMetricsAggregation implement
     private InternalScriptedMetric() {
     }
 
-    private InternalScriptedMetric(String name, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    private InternalScriptedMetric(String name) {
+        super(name);
     }
 
-    public InternalScriptedMetric(String name, Object aggregation, Script reduceScript, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        this(name, pipelineAggregators, metaData);
+    public InternalScriptedMetric(String name, Object aggregation, Script reduceScript) {
+        this(name);
         this.aggregation = aggregation;
         this.reduceScript = reduceScript;
     }
@@ -98,7 +96,7 @@ public class InternalScriptedMetric extends InternalMetricsAggregation implement
         } else {
             aggregation = aggregationObjects;
         }
-        return new InternalScriptedMetric(firstAggregation.getName(), aggregation, firstAggregation.reduceScript, pipelineAggregators(), getMetaData());
+        return new InternalScriptedMetric(firstAggregation.getName(), aggregation, firstAggregation.reduceScript);
 
     }
 

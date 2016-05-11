@@ -24,7 +24,6 @@ import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.io.stream.Writeable;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.aggregations.InternalAggregation.ReduceContext;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorBuilder;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.AggregationPath;
@@ -45,30 +44,18 @@ import java.util.Set;
  */
 public class AggregatorFactories {
 
-    public static final AggregatorFactories EMPTY = new AggregatorFactories(null, new AggregatorFactory<?>[0],
-            new ArrayList<PipelineAggregatorBuilder<?>>());
+    public static final AggregatorFactories EMPTY = new AggregatorFactories(null, new AggregatorFactory<?>[0]);
 
     private AggregatorFactory<?> parent;
     private AggregatorFactory<?>[] factories;
-    private List<PipelineAggregatorBuilder<?>> pipelineAggregatorFactories;
 
     public static Builder builder() {
         return new Builder();
     }
 
-    private AggregatorFactories(AggregatorFactory<?> parent, AggregatorFactory<?>[] factories,
-            List<PipelineAggregatorBuilder<?>> pipelineAggregators) {
+    private AggregatorFactories(AggregatorFactory<?> parent, AggregatorFactory<?>[] factories) {
         this.parent = parent;
         this.factories = factories;
-        this.pipelineAggregatorFactories = pipelineAggregators;
-    }
-
-    public List<PipelineAggregator> createPipelineAggregators() throws IOException {
-        List<PipelineAggregator> pipelineAggregators = new ArrayList<>();
-        for (PipelineAggregatorBuilder<?> factory : this.pipelineAggregatorFactories) {
-            pipelineAggregators.add(factory.create());
-        }
-        return pipelineAggregators;
     }
 
     /**
@@ -107,19 +94,9 @@ public class AggregatorFactories {
         return factories.length;
     }
 
-    /**
-     * @return the number of pipeline aggregator factories
-     */
-    public int countPipelineAggregators() {
-        return pipelineAggregatorFactories.size();
-    }
-
     public void validate() {
         for (AggregatorFactory<?> factory : factories) {
             factory.validate();
-        }
-        for (PipelineAggregatorBuilder<?> factory : pipelineAggregatorFactories) {
-            factory.validate(parent, factories, pipelineAggregatorFactories);
         }
     }
 
@@ -203,17 +180,11 @@ public class AggregatorFactories {
             if (aggregatorBuilders.isEmpty() && pipelineAggregatorBuilders.isEmpty()) {
                 return EMPTY;
             }
-            List<PipelineAggregatorBuilder<?>> orderedpipelineAggregators = null;
-            if (skipResolveOrder) {
-                orderedpipelineAggregators = new ArrayList<>(pipelineAggregatorBuilders);
-            } else {
-                orderedpipelineAggregators = resolvePipelineAggregatorOrder(this.pipelineAggregatorBuilders, this.aggregatorBuilders);
-            }
             AggregatorFactory<?>[] aggFactories = new AggregatorFactory<?>[aggregatorBuilders.size()];
             for (int i = 0; i < aggregatorBuilders.size(); i++) {
                 aggFactories[i] = aggregatorBuilders.get(i).build(context, parent);
             }
-            return new AggregatorFactories(parent, aggFactories, orderedpipelineAggregators);
+            return new AggregatorFactories(parent, aggFactories);
         }
 
         public List<PipelineAggregatorBuilder<?>> buildPipelineAggregators() {

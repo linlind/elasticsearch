@@ -43,10 +43,9 @@ public class DoubleTermsAggregator extends LongTermsAggregator {
 
     public DoubleTermsAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource, DocValueFormat format,
             Terms.Order order, BucketCountThresholds bucketCountThresholds, AggregationContext aggregationContext, Aggregator parent,
-            SubAggCollectionMode collectionMode, boolean showTermDocCountError, IncludeExclude.LongFilter longFilter,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+            SubAggCollectionMode collectionMode, boolean showTermDocCountError, IncludeExclude.LongFilter longFilter) throws IOException {
         super(name, factories, valuesSource, format, order, bucketCountThresholds, aggregationContext, parent, collectionMode,
-                showTermDocCountError, longFilter, pipelineAggregators, metaData);
+                showTermDocCountError, longFilter);
     }
 
     @Override
@@ -78,8 +77,7 @@ public class DoubleTermsAggregator extends LongTermsAggregator {
             buckets[i] = convertToDouble(buckets[i]);
         }
         return new DoubleTerms(terms.getName(), terms.order, terms.format, terms.requiredSize, terms.shardSize, terms.minDocCount,
-                Arrays.asList(buckets), terms.showTermDocCountError, terms.docCountError, terms.otherDocCount, terms.pipelineAggregators(),
-                terms.getMetaData());
+                Arrays.asList(buckets), terms.showTermDocCountError, terms.docCountError, terms.otherDocCount);
     }
 
 }

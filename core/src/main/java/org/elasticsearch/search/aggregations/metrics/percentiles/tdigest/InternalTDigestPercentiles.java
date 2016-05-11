@@ -24,12 +24,8 @@ import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.metrics.percentiles.InternalPercentile;
 import org.elasticsearch.search.aggregations.metrics.percentiles.Percentile;
 import org.elasticsearch.search.aggregations.metrics.percentiles.Percentiles;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
 *
@@ -54,9 +50,8 @@ public class InternalTDigestPercentiles extends AbstractInternalTDigestPercentil
     InternalTDigestPercentiles() {
     } // for serialization
 
-    public InternalTDigestPercentiles(String name, double[] percents, TDigestState state, boolean keyed, DocValueFormat formatter,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, percents, state, keyed, formatter, pipelineAggregators, metaData);
+    public InternalTDigestPercentiles(String name, double[] percents, TDigestState state, boolean keyed, DocValueFormat formatter) {
+        super(name, percents, state, keyed, formatter);
     }
 
     @Override
@@ -80,9 +75,8 @@ public class InternalTDigestPercentiles extends AbstractInternalTDigestPercentil
     }
 
     @Override
-    protected AbstractInternalTDigestPercentiles createReduced(String name, double[] keys, TDigestState merged, boolean keyed,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        return new InternalTDigestPercentiles(name, keys, merged, keyed, format, pipelineAggregators, metaData);
+    protected AbstractInternalTDigestPercentiles createReduced(String name, double[] keys, TDigestState merged, boolean keyed) {
+        return new InternalTDigestPercentiles(name, keys, merged, keyed, format);
     }
 
     @Override

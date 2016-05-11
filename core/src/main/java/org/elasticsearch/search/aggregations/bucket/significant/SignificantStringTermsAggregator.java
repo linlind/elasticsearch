@@ -52,11 +52,11 @@ public class SignificantStringTermsAggregator extends StringTermsAggregator {
 
     public SignificantStringTermsAggregator(String name, AggregatorFactories factories, ValuesSource valuesSource, DocValueFormat format,
             BucketCountThresholds bucketCountThresholds, IncludeExclude.StringFilter includeExclude, AggregationContext aggregationContext,
-            Aggregator parent, SignificanceHeuristic significanceHeuristic, SignificantTermsAggregatorFactory termsAggFactory,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+            Aggregator parent, SignificanceHeuristic significanceHeuristic, SignificantTermsAggregatorFactory termsAggFactory)
+            throws IOException {
 
         super(name, factories, valuesSource, null, format, bucketCountThresholds, includeExclude, aggregationContext, parent,
-                SubAggCollectionMode.DEPTH_FIRST, false, pipelineAggregators, metaData);
+                SubAggCollectionMode.DEPTH_FIRST, false);
         this.significanceHeuristic = significanceHeuristic;
         this.termsAggFactory = termsAggFactory;
     }
@@ -118,8 +118,7 @@ public class SignificantStringTermsAggregator extends StringTermsAggregator {
         }
 
         return new SignificantStringTerms(subsetSize, supersetSize, name, bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(), significanceHeuristic, Arrays.asList(list), pipelineAggregators(),
-                metaData());
+                bucketCountThresholds.getMinDocCount(), significanceHeuristic, Arrays.asList(list));
     }
 
     @Override
@@ -130,7 +129,7 @@ public class SignificantStringTermsAggregator extends StringTermsAggregator {
         int supersetSize = topReader.numDocs();
         return new SignificantStringTerms(0, supersetSize, name, bucketCountThresholds.getRequiredSize(),
                 bucketCountThresholds.getMinDocCount(), significanceHeuristic,
-                Collections.<InternalSignificantTerms.Bucket> emptyList(), pipelineAggregators(), metaData());
+                Collections.<InternalSignificantTerms.Bucket> emptyList());
     }
 
     @Override

@@ -26,11 +26,8 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class InternalGeoBounds extends InternalMetricsAggregation implements GeoBounds {
 
@@ -43,7 +40,7 @@ public class InternalGeoBounds extends InternalMetricsAggregation implements Geo
             return result;
         }
     };
-    
+
     private double top;
     private double bottom;
     private double posLeft;
@@ -54,11 +51,10 @@ public class InternalGeoBounds extends InternalMetricsAggregation implements Geo
 
     InternalGeoBounds() {
     }
-    
-    InternalGeoBounds(String name, double top, double bottom, double posLeft, double posRight,
-            double negLeft, double negRight, boolean wrapLongitude,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+
+    InternalGeoBounds(String name, double top, double bottom, double posLeft, double posRight, double negLeft, double negRight,
+            boolean wrapLongitude) {
+        super(name);
         this.top = top;
         this.bottom = bottom;
         this.posLeft = posLeft;
@@ -72,7 +68,7 @@ public class InternalGeoBounds extends InternalMetricsAggregation implements Geo
     public Type type() {
         return TYPE;
     }
-    
+
     @Override
     public InternalAggregation doReduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
         double top = Double.NEGATIVE_INFINITY;
@@ -104,7 +100,7 @@ public class InternalGeoBounds extends InternalMetricsAggregation implements Geo
                 negRight = bounds.negRight;
             }
         }
-        return new InternalGeoBounds(name, top, bottom, posLeft, posRight, negLeft, negRight, wrapLongitude, pipelineAggregators(), getMetaData());
+        return new InternalGeoBounds(name, top, bottom, posLeft, posRight, negLeft, negRight, wrapLongitude);
     }
 
     @Override
@@ -198,25 +194,25 @@ public class InternalGeoBounds extends InternalMetricsAggregation implements Geo
     public static void registerStream() {
         AggregationStreams.registerStream(STREAM, TYPE.stream());
     }
-    
+
     private static class BoundingBox {
         private final GeoPoint topLeft;
         private final GeoPoint bottomRight;
-        
+
         public BoundingBox(GeoPoint topLeft, GeoPoint bottomRight) {
             this.topLeft = topLeft;
             this.bottomRight = bottomRight;
         }
-        
+
         public GeoPoint topLeft() {
             return topLeft;
         }
-        
+
         public GeoPoint bottomRight() {
             return bottomRight;
         }
     }
-    
+
     private BoundingBox resolveBoundingBox() {
         if (Double.isInfinite(top)) {
             return null;

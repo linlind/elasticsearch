@@ -54,11 +54,11 @@ public class InternalSimpleValue extends InternalNumericMetricsAggregation.Singl
     protected InternalSimpleValue() {
     } // for serialization
 
-    public InternalSimpleValue(String name, double value, DocValueFormat formatter, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalSimpleValue(String name, double value, DocValueFormat formatter, Map<String, Object> metaData) {
+        super(name);
         this.format = formatter;
         this.value = value;
+        this.metaData = metaData;
     }
 
     @Override

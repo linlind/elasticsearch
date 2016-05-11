@@ -54,7 +54,7 @@ public class GlobalAggregatorBuilder extends AggregatorBuilder<GlobalAggregatorB
     @Override
     protected AggregatorFactory<?> doBuild(AggregationContext context, AggregatorFactory<?> parent, Builder subFactoriesBuilder)
             throws IOException {
-        return new GlobalAggregatorFactory(name, type, context, parent, subFactoriesBuilder, metaData);
+        return new GlobalAggregatorFactory(name, type, context, parent, subFactoriesBuilder);
     }
 
     @Override

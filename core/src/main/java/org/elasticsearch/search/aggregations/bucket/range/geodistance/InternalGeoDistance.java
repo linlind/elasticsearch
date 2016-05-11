@@ -26,13 +26,11 @@ import org.elasticsearch.search.aggregations.InternalAggregations;
 import org.elasticsearch.search.aggregations.bucket.BucketStreamContext;
 import org.elasticsearch.search.aggregations.bucket.BucketStreams;
 import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.ValueType;
 import org.elasticsearch.search.aggregations.support.ValuesSourceType;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -116,15 +114,13 @@ public class InternalGeoDistance extends InternalRange<InternalGeoDistance.Bucke
         }
 
         @Override
-        public InternalGeoDistance create(String name, List<Bucket> ranges, DocValueFormat format, boolean keyed,
-                List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-            return new InternalGeoDistance(name, ranges, keyed, pipelineAggregators, metaData);
+        public InternalGeoDistance create(String name, List<Bucket> ranges, DocValueFormat format, boolean keyed) {
+            return new InternalGeoDistance(name, ranges, keyed);
         }
 
         @Override
         public InternalGeoDistance create(List<Bucket> ranges, InternalGeoDistance prototype) {
-            return new InternalGeoDistance(prototype.name, ranges, prototype.keyed, prototype.pipelineAggregators(),
-                    prototype.metaData);
+            return new InternalGeoDistance(prototype.name, ranges, prototype.keyed);
         }
 
         @Override
@@ -142,10 +138,8 @@ public class InternalGeoDistance extends InternalRange<InternalGeoDistance.Bucke
 
     InternalGeoDistance() {} // for serialization
 
-    public InternalGeoDistance(String name, List<Bucket> ranges, boolean keyed,
-            List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(name, ranges, DocValueFormat.RAW, keyed, pipelineAggregators, metaData);
+    public InternalGeoDistance(String name, List<Bucket> ranges, boolean keyed) {
+        super(name, ranges, DocValueFormat.RAW, keyed);
     }
 
     @Override

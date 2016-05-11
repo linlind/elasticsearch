@@ -85,7 +85,7 @@ public class CumulativeSumPipelineAggregator extends PipelineAggregator {
             List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false).map((p) -> {
                 return (InternalAggregation) p;
             }).collect(Collectors.toList());
-            aggs.add(new InternalSimpleValue(name(), sum, formatter, new ArrayList<PipelineAggregator>(), metaData()));
+            aggs.add(new InternalSimpleValue(name(), sum, formatter, metaData()));
             InternalHistogram.Bucket newBucket = factory.createBucket(bucket.getKey(), bucket.getDocCount(),
                     new InternalAggregations(aggs), bucket.getKeyed(), bucket.getFormatter());
             newBuckets.add(newBucket);

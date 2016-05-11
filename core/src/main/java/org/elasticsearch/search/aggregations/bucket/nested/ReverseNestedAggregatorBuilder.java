@@ -80,7 +80,7 @@ public class ReverseNestedAggregatorBuilder extends AggregatorBuilder<ReverseNes
     @Override
     protected AggregatorFactory<?> doBuild(AggregationContext context, AggregatorFactory<?> parent, Builder subFactoriesBuilder)
             throws IOException {
-        return new ReverseNestedAggregatorFactory(name, type, path, context, parent, subFactoriesBuilder, metaData);
+        return new ReverseNestedAggregatorFactory(name, type, path, context, parent, subFactoriesBuilder);
     }
 
     @Override

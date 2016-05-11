@@ -19,7 +19,6 @@
 package org.elasticsearch.search.aggregations;
 
 import org.elasticsearch.cluster.ClusterState;
-import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.io.stream.StreamInput;
@@ -29,13 +28,9 @@ import org.elasticsearch.common.util.BigArrays;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.script.ScriptService;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorStreams;
 import org.elasticsearch.search.aggregations.support.AggregationPath;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -122,8 +117,6 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
 
     protected Map<String, Object> metaData;
 
-    private List<PipelineAggregator> pipelineAggregators;
-
     /** Constructs an un initialized addAggregation (used for serialization) **/
     protected InternalAggregation() {}
 
@@ -132,10 +125,8 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
      *
      * @param name The name of the get.
      */
-    protected InternalAggregation(String name, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
+    protected InternalAggregation(String name) {
         this.name = name;
-        this.pipelineAggregators = pipelineAggregators;
-        this.metaData = metaData;
     }
 
     @Override
@@ -156,9 +147,6 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
      */
     public final InternalAggregation reduce(List<InternalAggregation> aggregations, ReduceContext reduceContext) {
         InternalAggregation aggResult = doReduce(aggregations, reduceContext);
-        for (PipelineAggregator pipelineAggregator : pipelineAggregators) {
-            aggResult = pipelineAggregator.reduce(aggResult, reduceContext);
-        }
         return aggResult;
     }
 
@@ -195,10 +183,6 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
         return metaData;
     }
 
-    public List<PipelineAggregator> pipelineAggregators() {
-        return pipelineAggregators;
-    }
-
     @Override
     public final XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject(name);
@@ -217,11 +201,6 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
     public final void writeTo(StreamOutput out) throws IOException {
         out.writeString(name);
         out.writeGenericValue(metaData);
-        out.writeVInt(pipelineAggregators.size());
-        for (PipelineAggregator pipelineAggregator : pipelineAggregators) {
-            out.writeBytesReference(pipelineAggregator.type().stream());
-            pipelineAggregator.writeTo(out);
-        }
         doWriteTo(out);
     }
 
@@ -231,17 +210,6 @@ public abstract class InternalAggregation implements Aggregation, ToXContent, St
     public final void readFrom(StreamInput in) throws IOException {
         name = in.readString();
         metaData = in.readMap();
-        int size = in.readVInt();
-        if (size == 0) {
-            pipelineAggregators = Collections.emptyList();
-        } else {
-            pipelineAggregators = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                BytesReference type = in.readBytesReference();
-                PipelineAggregator pipelineAggregator = PipelineAggregatorStreams.stream(type).readResult(in);
-                pipelineAggregators.add(pipelineAggregator);
-            }
-        }
         doReadFrom(in);
     }
 

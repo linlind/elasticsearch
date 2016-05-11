@@ -25,15 +25,11 @@ import org.elasticsearch.search.aggregations.Aggregator;
 import org.elasticsearch.search.aggregations.AggregatorFactories;
 import org.elasticsearch.search.aggregations.AggregatorFactory;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 import org.elasticsearch.search.aggregations.support.ValuesSource.Numeric;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.elasticsearch.search.aggregations.support.ValuesSourceAggregatorFactory;
 import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
 
@@ -51,8 +47,8 @@ public abstract class AbstractHistogramAggregatorFactory<AF extends AbstractHist
     public AbstractHistogramAggregatorFactory(String name, Type type, ValuesSourceConfig<Numeric> config, long interval, long offset,
             InternalOrder order, boolean keyed, long minDocCount, ExtendedBounds extendedBounds,
             InternalHistogram.Factory<?> histogramFactory, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
-        super(name, type, config, context, parent, subFactoriesBuilder, metaData);
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        super(name, type, config, context, parent, subFactoriesBuilder);
         this.interval = interval;
         this.offset = offset;
         this.order = order;
@@ -67,11 +63,10 @@ public abstract class AbstractHistogramAggregatorFactory<AF extends AbstractHist
     }
 
     @Override
-    protected Aggregator createUnmapped(Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-            throws IOException {
+    protected Aggregator createUnmapped(Aggregator parent) throws IOException {
         Rounding rounding = createRounding();
         return new HistogramAggregator(name, factories, rounding, order, keyed, minDocCount, extendedBounds, null, config.format(),
-                histogramFactory, context, parent, pipelineAggregators, metaData);
+                histogramFactory, context, parent);
     }
 
     protected Rounding createRounding() {
@@ -87,8 +82,8 @@ public abstract class AbstractHistogramAggregatorFactory<AF extends AbstractHist
     }
 
     @Override
-    protected Aggregator doCreateInternal(ValuesSource.Numeric valuesSource, Aggregator parent, boolean collectsFromSingleBucket,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+    protected Aggregator doCreateInternal(ValuesSource.Numeric valuesSource, Aggregator parent, boolean collectsFromSingleBucket)
+            throws IOException {
         if (collectsFromSingleBucket == false) {
             return asMultiBucketAggregator(this, context, parent);
         }
@@ -105,7 +100,7 @@ public abstract class AbstractHistogramAggregatorFactory<AF extends AbstractHist
             roundedBounds = extendedBounds.round(rounding);
         }
         return new HistogramAggregator(name, factories, rounding, order, keyed, minDocCount, roundedBounds, valuesSource,
-                config.format(), histogramFactory, context, parent, pipelineAggregators, metaData);
+                config.format(), histogramFactory, context, parent);
     }
 
 }

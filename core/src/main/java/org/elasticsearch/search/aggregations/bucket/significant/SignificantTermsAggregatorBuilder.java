@@ -219,7 +219,7 @@ public class SignificantTermsAggregatorBuilder extends ValuesSourceAggregatorBui
     protected ValuesSourceAggregatorFactory<ValuesSource, ?> innerBuild(AggregationContext context, ValuesSourceConfig<ValuesSource> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
         return new SignificantTermsAggregatorFactory(name, type, config, includeExclude, executionHint, filterBuilder,
-                bucketCountThresholds, significanceHeuristic, context, parent, subFactoriesBuilder, metaData);
+                bucketCountThresholds, significanceHeuristic, context, parent, subFactoriesBuilder);
     }
 
     @Override

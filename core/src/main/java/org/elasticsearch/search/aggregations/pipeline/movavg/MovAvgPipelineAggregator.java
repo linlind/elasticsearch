@@ -124,7 +124,7 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
                     List<InternalAggregation> aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false).map((p) -> {
                         return (InternalAggregation) p;
                     }).collect(Collectors.toList());
-                    aggs.add(new InternalSimpleValue(name(), movavg, formatter, new ArrayList<PipelineAggregator>(), metaData()));
+                    aggs.add(new InternalSimpleValue(name(), movavg, formatter, metaData()));
                     newBucket = factory.createBucket(bucket.getKey(), bucket.getDocCount(), new InternalAggregations(
                             aggs), bucket.getKeyed(), bucket.getFormatter());
                 }
@@ -167,7 +167,7 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
                     aggs = StreamSupport.stream(bucket.getAggregations().spliterator(), false).map((p) -> {
                         return (InternalAggregation) p;
                     }).collect(Collectors.toList());
-                    aggs.add(new InternalSimpleValue(name(), predictions[i], formatter, new ArrayList<PipelineAggregator>(), metaData()));
+                    aggs.add(new InternalSimpleValue(name(), predictions[i], formatter, metaData()));
 
                     InternalHistogram.Bucket newBucket = factory.createBucket(newKey, 0, new InternalAggregations(
                             aggs), keyed, formatter);
@@ -178,7 +178,7 @@ public class MovAvgPipelineAggregator extends PipelineAggregator {
                 } else {
                     // Not seen before, create fresh
                     aggs = new ArrayList<>();
-                    aggs.add(new InternalSimpleValue(name(), predictions[i], formatter, new ArrayList<PipelineAggregator>(), metaData()));
+                    aggs.add(new InternalSimpleValue(name(), predictions[i], formatter, metaData()));
 
                     InternalHistogram.Bucket newBucket = factory.createBucket(newKey, 0, new InternalAggregations(
                             aggs), keyed, formatter);

@@ -48,11 +48,10 @@ public class SignificantLongTermsAggregator extends LongTermsAggregator {
     public SignificantLongTermsAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource,
             DocValueFormat format, BucketCountThresholds bucketCountThresholds, AggregationContext aggregationContext, Aggregator parent,
             SignificanceHeuristic significanceHeuristic, SignificantTermsAggregatorFactory termsAggFactory,
-            IncludeExclude.LongFilter includeExclude,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+            IncludeExclude.LongFilter includeExclude) throws IOException {
 
         super(name, factories, valuesSource, format, null, bucketCountThresholds, aggregationContext, parent,
-                SubAggCollectionMode.DEPTH_FIRST, false, includeExclude, pipelineAggregators, metaData);
+                SubAggCollectionMode.DEPTH_FIRST, false, includeExclude);
         this.significanceHeuristic = significanceHeuristic;
         this.termsAggFactory = termsAggFactory;
     }
@@ -112,8 +111,7 @@ public class SignificantLongTermsAggregator extends LongTermsAggregator {
             list[i] = bucket;
         }
         return new SignificantLongTerms(subsetSize, supersetSize, name, format, bucketCountThresholds.getRequiredSize(),
-                bucketCountThresholds.getMinDocCount(), significanceHeuristic, Arrays.asList(list), pipelineAggregators(),
-                metaData());
+                bucketCountThresholds.getMinDocCount(), significanceHeuristic, Arrays.asList(list));
     }
 
     @Override
@@ -124,7 +122,7 @@ public class SignificantLongTermsAggregator extends LongTermsAggregator {
         int supersetSize = topReader.numDocs();
         return new SignificantLongTerms(0, supersetSize, name, format, bucketCountThresholds.getRequiredSize(),
                 bucketCountThresholds.getMinDocCount(), significanceHeuristic,
-                Collections.<InternalSignificantTerms.Bucket> emptyList(), pipelineAggregators(), metaData());
+                Collections.<InternalSignificantTerms.Bucket> emptyList());
     }
 
     @Override

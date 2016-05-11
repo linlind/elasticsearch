@@ -25,8 +25,6 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.DocValueFormat;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.pipeline.InternalSimpleValue;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +51,9 @@ public class InternalDerivative extends InternalSimpleValue implements Derivativ
     InternalDerivative() {
     }
 
-    public InternalDerivative(String name, double value, double normalizationFactor, DocValueFormat formatter, List<PipelineAggregator> pipelineAggregators,
+    public InternalDerivative(String name, double value, double normalizationFactor, DocValueFormat formatter,
             Map<String, Object> metaData) {
-        super(name, value, formatter, pipelineAggregators, metaData);
+        super(name, value, formatter, metaData);
         this.normalizationFactor = normalizationFactor;
     }
 

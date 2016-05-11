@@ -25,8 +25,6 @@ import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.support.ValuesSource.Numeric;
 
 import java.io.IOException;
-import java.util.Map;
-
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
 
@@ -34,9 +32,9 @@ public class HistogramAggregatorFactory extends AbstractHistogramAggregatorFacto
 
     public HistogramAggregatorFactory(String name, Type type, ValuesSourceConfig<Numeric> config, long interval, long offset,
             InternalOrder order, boolean keyed, long minDocCount, ExtendedBounds extendedBounds, AggregationContext context,
-            AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
+            AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
         super(name, type, config, interval, offset, order, keyed, minDocCount, extendedBounds, InternalHistogram.HISTOGRAM_FACTORY, context,
-                parent, subFactoriesBuilder, metaData);
+                parent, subFactoriesBuilder);
     }
 
 }

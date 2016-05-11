@@ -31,13 +31,10 @@ import org.elasticsearch.search.aggregations.Aggregator;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractHDRPercentilesAggregator extends NumericMetricsAggregator.MultiValue {
 
@@ -53,9 +50,8 @@ public abstract class AbstractHDRPercentilesAggregator extends NumericMetricsAgg
     protected final boolean keyed;
 
     public AbstractHDRPercentilesAggregator(String name, ValuesSource.Numeric valuesSource, AggregationContext context, Aggregator parent,
-            double[] keys, int numberOfSignificantValueDigits, boolean keyed, DocValueFormat formatter,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        super(name, context, parent, pipelineAggregators, metaData);
+            double[] keys, int numberOfSignificantValueDigits, boolean keyed, DocValueFormat formatter) throws IOException {
+        super(name, context, parent);
         this.valuesSource = valuesSource;
         this.keyed = keyed;
         this.format = formatter;

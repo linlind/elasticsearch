@@ -24,12 +24,10 @@ import org.elasticsearch.search.DocValueFormat;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorStreams;
 import org.elasticsearch.search.aggregations.pipeline.bucketmetrics.BucketMetricsPipelineAggregator;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class StatsBucketPipelineAggregator extends BucketMetricsPipelineAggregator {
@@ -86,8 +84,8 @@ public class StatsBucketPipelineAggregator extends BucketMetricsPipelineAggregat
     }
 
     @Override
-    protected InternalAggregation buildAggregation(List<PipelineAggregator> pipelineAggregators, Map<String, Object> metadata) {
-        return new InternalStatsBucket(name(), count, sum, min, max, format, pipelineAggregators, metadata);
+    protected InternalAggregation buildAggregation(Map<String, Object> metadata) {
+        return new InternalStatsBucket(name(), count, sum, min, max, format, metadata);
     }
 
 }

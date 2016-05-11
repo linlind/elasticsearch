@@ -25,11 +25,8 @@ import org.elasticsearch.search.DocValueFormat;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
 *
@@ -67,10 +64,8 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
 
     protected InternalStats() {} // for serialization
 
-    public InternalStats(String name, long count, double sum, double min, double max, DocValueFormat formatter,
-            List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalStats(String name, long count, double sum, double min, double max, DocValueFormat formatter) {
+        super(name);
         this.count = count;
         this.sum = sum;
         this.min = min;
@@ -160,7 +155,7 @@ public class InternalStats extends InternalNumericMetricsAggregation.MultiValue 
             max = Math.max(max, stats.getMax());
             sum += stats.getSum();
         }
-        return new InternalStats(name, count, sum, min, max, format, pipelineAggregators(), getMetaData());
+        return new InternalStats(name, count, sum, min, max, format);
     }
 
     @Override

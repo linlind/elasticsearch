@@ -58,7 +58,7 @@ public class SumAggregatorBuilder extends ValuesSourceAggregatorBuilder.LeafOnly
     @Override
     protected SumAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new SumAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder, metaData);
+        return new SumAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder);
     }
 
     @Override

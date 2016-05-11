@@ -46,8 +46,8 @@ public class ScriptedMetricAggregatorFactory extends AggregatorFactory<ScriptedM
 
     public ScriptedMetricAggregatorFactory(String name, Type type, Script initScript, Script mapScript, Script combineScript,
             Script reduceScript, Map<String, Object> params, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactories, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactories, metaData);
+            AggregatorFactories.Builder subFactories) throws IOException {
+        super(name, type, context, parent, subFactories);
         this.initScript = initScript;
         this.mapScript = mapScript;
         this.combineScript = combineScript;
@@ -56,8 +56,7 @@ public class ScriptedMetricAggregatorFactory extends AggregatorFactory<ScriptedM
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
         if (collectsFromSingleBucket == false) {
             return asMultiBucketAggregator(this, context, parent);
         }
@@ -69,8 +68,7 @@ public class ScriptedMetricAggregatorFactory extends AggregatorFactory<ScriptedM
             params.put("_agg", new HashMap<String, Object>());
         }
         return new ScriptedMetricAggregator(name, insertParams(initScript, params), insertParams(mapScript, params),
-                insertParams(combineScript, params), deepCopyScript(reduceScript, context.searchContext()), params, context, parent,
-                pipelineAggregators, metaData);
+                insertParams(combineScript, params), deepCopyScript(reduceScript, context.searchContext()), params, context, parent);
     }
 
     private static Script insertParams(Script script, Map<String, Object> params) {

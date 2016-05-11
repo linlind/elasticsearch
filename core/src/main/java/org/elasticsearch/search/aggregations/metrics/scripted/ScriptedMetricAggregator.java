@@ -47,9 +47,8 @@ public class ScriptedMetricAggregator extends MetricsAggregator {
     private Map<String, Object> params;
 
     protected ScriptedMetricAggregator(String name, Script initScript, Script mapScript, Script combineScript, Script reduceScript,
-            Map<String, Object> params, AggregationContext context, Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-            throws IOException {
-        super(name, context, parent, pipelineAggregators, metaData);
+            Map<String, Object> params, AggregationContext context, Aggregator parent) throws IOException {
+        super(name, context, parent);
         this.params = params;
         ScriptService scriptService = context.searchContext().scriptService();
         ClusterState state = context.searchContext().getQueryShardContext().getClusterState();
@@ -92,13 +91,12 @@ public class ScriptedMetricAggregator extends MetricsAggregator {
         } else {
             aggregation = params.get("_agg");
         }
-        return new InternalScriptedMetric(name, aggregation, reduceScript, pipelineAggregators(),
-                metaData());
+        return new InternalScriptedMetric(name, aggregation, reduceScript);
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalScriptedMetric(name, null, reduceScript, pipelineAggregators(), metaData());
+        return new InternalScriptedMetric(name, null, reduceScript);
     }
 
 }

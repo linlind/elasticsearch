@@ -84,7 +84,7 @@ public class ChildrenAggregatorBuilder extends ValuesSourceAggregatorBuilder<Par
     protected ValuesSourceAggregatorFactory<ParentChild, ?> innerBuild(AggregationContext context,
             ValuesSourceConfig<ParentChild> config, AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
         return new ChildrenAggregatorFactory(name, type, config, parentType, childFilter, parentFilter, context, parent,
-                subFactoriesBuilder, metaData);
+                subFactoriesBuilder);
     }
 
     @Override

@@ -27,7 +27,6 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.NonCollectingAggregator;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.bucket.sampler.SamplerAggregator.ExecutionMode;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 import org.elasticsearch.search.aggregations.support.ValuesSourceAggregatorFactory;
@@ -35,8 +34,6 @@ import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
 import org.elasticsearch.search.aggregations.support.ValuesSource.Numeric;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class DiversifiedAggregatorFactory extends ValuesSourceAggregatorFactory<ValuesSource, DiversifiedAggregatorFactory> {
 
@@ -45,21 +42,21 @@ public class DiversifiedAggregatorFactory extends ValuesSourceAggregatorFactory<
     private final String executionHint;
 
     public DiversifiedAggregatorFactory(String name, Type type, ValuesSourceConfig<ValuesSource> config, int shardSize, int maxDocsPerValue,
-            String executionHint, AggregationContext context, AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder,
-            Map<String, Object> metaData) throws IOException {
-        super(name, type, config, context, parent, subFactoriesBuilder, metaData);
+            String executionHint, AggregationContext context, AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder)
+            throws IOException {
+        super(name, type, config, context, parent, subFactoriesBuilder);
         this.shardSize = shardSize;
         this.maxDocsPerValue = maxDocsPerValue;
         this.executionHint = executionHint;
     }
 
     @Override
-    protected Aggregator doCreateInternal(ValuesSource valuesSource, Aggregator parent, boolean collectsFromSingleBucket,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+    protected Aggregator doCreateInternal(ValuesSource valuesSource, Aggregator parent, boolean collectsFromSingleBucket)
+            throws IOException {
 
         if (valuesSource instanceof ValuesSource.Numeric) {
-            return new DiversifiedNumericSamplerAggregator(name, shardSize, factories, context, parent, pipelineAggregators, metaData,
-                    (Numeric) valuesSource, maxDocsPerValue);
+            return new DiversifiedNumericSamplerAggregator(name, shardSize, factories, context, parent, (Numeric) valuesSource,
+                    maxDocsPerValue);
         }
 
         if (valuesSource instanceof ValuesSource.Bytes) {
@@ -76,8 +73,7 @@ public class DiversifiedAggregatorFactory extends ValuesSourceAggregatorFactory<
             if ((execution.needsGlobalOrdinals()) && (!(valuesSource instanceof ValuesSource.Bytes.WithOrdinals))) {
                 execution = ExecutionMode.MAP;
             }
-            return execution.create(name, factories, shardSize, maxDocsPerValue, valuesSource, context, parent, pipelineAggregators,
-                    metaData);
+            return execution.create(name, factories, shardSize, maxDocsPerValue, valuesSource, context, parent);
         }
 
         throw new AggregationExecutionException("Sampler aggregation cannot be applied to field [" + config.fieldContext().field()
@@ -85,11 +81,11 @@ public class DiversifiedAggregatorFactory extends ValuesSourceAggregatorFactory<
     }
 
     @Override
-    protected Aggregator createUnmapped(Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
+    protected Aggregator createUnmapped(Aggregator parent)
             throws IOException {
-        final UnmappedSampler aggregation = new UnmappedSampler(name, pipelineAggregators, metaData);
+        final UnmappedSampler aggregation = new UnmappedSampler(name);
 
-        return new NonCollectingAggregator(name, context, parent, factories, pipelineAggregators, metaData) {
+        return new NonCollectingAggregator(name, context, parent, factories) {
             @Override
             public InternalAggregation buildEmptyAggregation() {
                 return aggregation;

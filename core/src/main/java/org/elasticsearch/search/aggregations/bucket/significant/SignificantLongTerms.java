@@ -27,8 +27,6 @@ import org.elasticsearch.search.aggregations.InternalAggregations;
 import org.elasticsearch.search.aggregations.bucket.BucketStreamContext;
 import org.elasticsearch.search.aggregations.bucket.BucketStreams;
 import org.elasticsearch.search.aggregations.bucket.significant.heuristics.SignificanceHeuristic;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,10 +164,9 @@ public class SignificantLongTerms extends InternalSignificantTerms<SignificantLo
     } // for serialization
 
     public SignificantLongTerms(long subsetSize, long supersetSize, String name, DocValueFormat format, int requiredSize,
-            long minDocCount, SignificanceHeuristic significanceHeuristic, List<? extends InternalSignificantTerms.Bucket> buckets,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
+            long minDocCount, SignificanceHeuristic significanceHeuristic, List<? extends InternalSignificantTerms.Bucket> buckets) {
 
-        super(subsetSize, supersetSize, name, requiredSize, minDocCount, significanceHeuristic, buckets, pipelineAggregators, metaData);
+        super(subsetSize, supersetSize, name, requiredSize, minDocCount, significanceHeuristic, buckets);
         this.format = Objects.requireNonNull(format);
     }
 
@@ -181,7 +178,7 @@ public class SignificantLongTerms extends InternalSignificantTerms<SignificantLo
     @Override
     public SignificantLongTerms create(List<SignificantLongTerms.Bucket> buckets) {
         return new SignificantLongTerms(this.subsetSize, this.supersetSize, this.name, this.format, this.requiredSize, this.minDocCount,
-                this.significanceHeuristic, buckets, this.pipelineAggregators(), this.metaData);
+                this.significanceHeuristic, buckets);
     }
 
     @Override
@@ -195,8 +192,7 @@ public class SignificantLongTerms extends InternalSignificantTerms<SignificantLo
             List<org.elasticsearch.search.aggregations.bucket.significant.InternalSignificantTerms.Bucket> buckets,
             InternalSignificantTerms prototype) {
         return new SignificantLongTerms(subsetSize, supersetSize, prototype.getName(), ((SignificantLongTerms) prototype).format,
-                prototype.requiredSize, prototype.minDocCount, prototype.significanceHeuristic, buckets, prototype.pipelineAggregators(),
-                prototype.getMetaData());
+                prototype.requiredSize, prototype.minDocCount, prototype.significanceHeuristic, buckets);
     }
 
     @Override

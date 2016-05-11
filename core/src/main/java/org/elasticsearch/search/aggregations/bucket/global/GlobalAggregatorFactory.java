@@ -34,13 +34,12 @@ import java.util.Map;
 public class GlobalAggregatorFactory extends AggregatorFactory<GlobalAggregatorFactory> {
 
     public GlobalAggregatorFactory(String name, Type type, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactories, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactories, metaData);
+            AggregatorFactories.Builder subFactories) throws IOException {
+        super(name, type, context, parent, subFactories);
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
         if (parent != null) {
             throw new AggregationExecutionException("Aggregation [" + parent.name() + "] cannot have a global " + "sub-aggregation [" + name
                     + "]. Global aggregations can only be defined as top level aggregations");
@@ -48,6 +47,6 @@ public class GlobalAggregatorFactory extends AggregatorFactory<GlobalAggregatorF
         if (collectsFromSingleBucket == false) {
             throw new IllegalStateException();
         }
-        return new GlobalAggregator(name, factories, context, pipelineAggregators, metaData);
+        return new GlobalAggregator(name, factories, context);
     }
 }

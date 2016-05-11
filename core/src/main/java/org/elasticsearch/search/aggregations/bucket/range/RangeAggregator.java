@@ -211,9 +211,9 @@ public class RangeAggregator extends BucketsAggregator {
 
     public RangeAggregator(String name, AggregatorFactories factories, ValuesSource.Numeric valuesSource, DocValueFormat format,
             InternalRange.Factory rangeFactory, List<? extends Range> ranges, boolean keyed, AggregationContext aggregationContext,
-            Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+            Aggregator parent) throws IOException {
 
-        super(name, factories, aggregationContext, parent, pipelineAggregators, metaData);
+        super(name, factories, aggregationContext, parent);
         assert valuesSource != null;
         this.valuesSource = valuesSource;
         this.format = format;
@@ -320,7 +320,7 @@ public class RangeAggregator extends BucketsAggregator {
             buckets.add(bucket);
         }
         // value source can be null in the case of unmapped fields
-        return rangeFactory.create(name, buckets, format, keyed, pipelineAggregators(), metaData());
+        return rangeFactory.create(name, buckets, format, keyed);
     }
 
     @Override
@@ -334,7 +334,7 @@ public class RangeAggregator extends BucketsAggregator {
             buckets.add(bucket);
         }
         // value source can be null in the case of unmapped fields
-        return rangeFactory.create(name, buckets, format, keyed, pipelineAggregators(), metaData());
+        return rangeFactory.create(name, buckets, format, keyed);
     }
 
     private static final void sortRanges(final Range[] ranges) {
@@ -366,12 +366,10 @@ public class RangeAggregator extends BucketsAggregator {
         private final DocValueFormat format;
 
         @SuppressWarnings("unchecked")
-        public Unmapped(String name, List<R> ranges, boolean keyed, DocValueFormat format,
-                AggregationContext context,
-                Aggregator parent, InternalRange.Factory factory, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-                throws IOException {
+        public Unmapped(String name, List<R> ranges, boolean keyed, DocValueFormat format, AggregationContext context, Aggregator parent,
+                InternalRange.Factory factory) throws IOException {
 
-            super(name, context, parent, pipelineAggregators, metaData);
+            super(name, context, parent);
             this.ranges = new ArrayList<>();
             for (R range : ranges) {
                 this.ranges.add((R) range.process(format, context.searchContext()));
@@ -388,7 +386,7 @@ public class RangeAggregator extends BucketsAggregator {
             for (RangeAggregator.Range range : ranges) {
                 buckets.add(factory.createBucket(range.key, range.from, range.to, 0, subAggs, keyed, format));
             }
-            return factory.create(name, buckets, format, keyed, pipelineAggregators(), metaData());
+            return factory.create(name, buckets, format, keyed);
         }
     }
 

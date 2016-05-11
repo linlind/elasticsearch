@@ -63,7 +63,7 @@ public class MissingAggregatorBuilder extends ValuesSourceAggregatorBuilder<Valu
     @Override
     protected ValuesSourceAggregatorFactory<ValuesSource, ?> innerBuild(AggregationContext context,
             ValuesSourceConfig<ValuesSource> config, AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new MissingAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder, metaData);
+        return new MissingAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder);
     }
 
     @Override

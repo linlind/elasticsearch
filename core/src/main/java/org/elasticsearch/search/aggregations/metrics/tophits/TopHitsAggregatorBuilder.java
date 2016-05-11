@@ -552,7 +552,7 @@ public class TopHitsAggregatorBuilder extends AggregatorBuilder<TopHitsAggregato
     protected TopHitsAggregatorFactory doBuild(AggregationContext context, AggregatorFactory<?> parent, Builder subfactoriesBuilder)
             throws IOException {
         return new TopHitsAggregatorFactory(name, type, from, size, explain, version, trackScores, sorts, highlightBuilder, fieldNames,
-                fieldDataFields, scriptFields, fetchSourceContext, context, parent, subfactoriesBuilder, metaData);
+                fieldDataFields, scriptFields, fetchSourceContext, context, parent, subfactoriesBuilder);
     }
 
     @Override

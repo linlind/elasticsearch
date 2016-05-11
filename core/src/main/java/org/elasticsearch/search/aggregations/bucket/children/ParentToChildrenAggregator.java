@@ -37,14 +37,11 @@ import org.elasticsearch.search.aggregations.AggregatorFactories;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 // The RecordingPerReaderBucketCollector assumes per segment recording which isn't the case for this
 // aggregation, for this reason that collector can't be used
@@ -67,11 +64,10 @@ public class ParentToChildrenAggregator extends SingleBucketAggregator {
     private final LongObjectPagedHashMap<long[]> parentOrdToOtherBuckets;
     private boolean multipleBucketsPerParentOrd = false;
 
-    public ParentToChildrenAggregator(String name, AggregatorFactories factories, AggregationContext aggregationContext,
-                                      Aggregator parent, String parentType, Query childFilter, Query parentFilter,
-                                      ValuesSource.Bytes.WithOrdinals.ParentChild valuesSource,
-            long maxOrd, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        super(name, factories, aggregationContext, parent, pipelineAggregators, metaData);
+    public ParentToChildrenAggregator(String name, AggregatorFactories factories, AggregationContext aggregationContext, Aggregator parent,
+            String parentType, Query childFilter, Query parentFilter, ValuesSource.Bytes.WithOrdinals.ParentChild valuesSource, long maxOrd)
+            throws IOException {
+        super(name, factories, aggregationContext, parent);
         this.parentType = parentType;
         // these two filters are cached in the parser
         this.childFilter = aggregationContext.searchContext().searcher().createNormalizedWeight(childFilter, false);
@@ -84,13 +80,12 @@ public class ParentToChildrenAggregator extends SingleBucketAggregator {
 
     @Override
     public InternalAggregation buildAggregation(long owningBucketOrdinal) throws IOException {
-        return new InternalChildren(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal), pipelineAggregators(),
-                metaData());
+        return new InternalChildren(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal));
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalChildren(name, 0, buildEmptySubAggregations(), pipelineAggregators(), metaData());
+        return new InternalChildren(name, 0, buildEmptySubAggregations());
     }
 
     @Override

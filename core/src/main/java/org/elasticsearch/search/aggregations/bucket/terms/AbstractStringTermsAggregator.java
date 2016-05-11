@@ -37,16 +37,15 @@ abstract class AbstractStringTermsAggregator extends TermsAggregator {
 
     public AbstractStringTermsAggregator(String name, AggregatorFactories factories, AggregationContext context, Aggregator parent,
             Terms.Order order, DocValueFormat format, BucketCountThresholds bucketCountThresholds, SubAggCollectionMode subAggCollectMode,
-            boolean showTermDocCountError, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        super(name, factories, context, parent, bucketCountThresholds, order, format, subAggCollectMode, pipelineAggregators, metaData);
+            boolean showTermDocCountError) throws IOException {
+        super(name, factories, context, parent, bucketCountThresholds, order, format, subAggCollectMode);
         this.showTermDocCountError = showTermDocCountError;
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
         return new StringTerms(name, order, format, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getShardSize(),
-                bucketCountThresholds.getMinDocCount(), Collections.<InternalTerms.Bucket> emptyList(), showTermDocCountError, 0, 0,
-                pipelineAggregators(), metaData());
+                bucketCountThresholds.getMinDocCount(), Collections.<InternalTerms.Bucket> emptyList(), showTermDocCountError, 0, 0);
     }
 
 }

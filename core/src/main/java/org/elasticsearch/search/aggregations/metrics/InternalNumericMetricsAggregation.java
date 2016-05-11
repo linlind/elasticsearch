@@ -19,10 +19,7 @@
 package org.elasticsearch.search.aggregations.metrics;
 
 import org.elasticsearch.search.DocValueFormat;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -37,8 +34,8 @@ public abstract class InternalNumericMetricsAggregation extends InternalMetricsA
 
         protected SingleValue() {}
 
-        protected SingleValue(String name, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-            super(name, pipelineAggregators, metaData);
+        protected SingleValue(String name) {
+            super(name);
         }
 
         @Override
@@ -63,8 +60,8 @@ public abstract class InternalNumericMetricsAggregation extends InternalMetricsA
 
         protected MultiValue() {}
 
-        protected MultiValue(String name, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-            super(name, pipelineAggregators, metaData);
+        protected MultiValue(String name) {
+            super(name);
         }
 
         public abstract double value(String name);
@@ -87,8 +84,8 @@ public abstract class InternalNumericMetricsAggregation extends InternalMetricsA
 
     private InternalNumericMetricsAggregation() {} // for serialization
 
-    private InternalNumericMetricsAggregation(String name, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    private InternalNumericMetricsAggregation(String name) {
+        super(name);
     }
 
 }

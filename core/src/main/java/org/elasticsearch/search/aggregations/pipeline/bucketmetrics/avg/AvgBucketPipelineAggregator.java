@@ -25,12 +25,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
 import org.elasticsearch.search.aggregations.pipeline.InternalSimpleValue;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.pipeline.PipelineAggregatorStreams;
 import org.elasticsearch.search.aggregations.pipeline.bucketmetrics.BucketMetricsPipelineAggregator;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class AvgBucketPipelineAggregator extends BucketMetricsPipelineAggregator {
@@ -79,9 +77,9 @@ public class AvgBucketPipelineAggregator extends BucketMetricsPipelineAggregator
     }
 
     @Override
-    protected InternalAggregation buildAggregation(List<PipelineAggregator> pipelineAggregators, Map<String, Object> metadata) {
+    protected InternalAggregation buildAggregation(Map<String, Object> metaData) {
         double avgValue = count == 0 ? Double.NaN : (sum / count);
-        return new InternalSimpleValue(name(), avgValue, format, pipelineAggregators, metadata);
+        return new InternalSimpleValue(name(), avgValue, format, metaData);
     }
 
 }

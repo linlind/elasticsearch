@@ -174,7 +174,7 @@ public class FiltersAggregatorBuilder extends AggregatorBuilder<FiltersAggregato
     protected AggregatorFactory<?> doBuild(AggregationContext context, AggregatorFactory<?> parent, Builder subFactoriesBuilder)
             throws IOException {
         return new FiltersAggregatorFactory(name, type, filters, keyed, otherBucket, otherBucketKey, context, parent,
-                subFactoriesBuilder, metaData);
+                subFactoriesBuilder);
     }
 
     @Override

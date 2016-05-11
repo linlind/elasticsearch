@@ -58,7 +58,7 @@ public class StatsAggregatorBuilder extends ValuesSourceAggregatorBuilder.LeafOn
     @Override
     protected StatsAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new StatsAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder, metaData);
+        return new StatsAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder);
     }
 
     @Override

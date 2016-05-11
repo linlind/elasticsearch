@@ -114,8 +114,7 @@ public class RangeAggregatorBuilder extends AbstractRangeBuilder<RangeAggregator
     @Override
     protected RangeAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new RangeAggregatorFactory(name, type, config, ranges, keyed, rangeFactory, context, parent, subFactoriesBuilder,
-                metaData);
+        return new RangeAggregatorFactory(name, type, config, ranges, keyed, rangeFactory, context, parent, subFactoriesBuilder);
     }
 
     @Override

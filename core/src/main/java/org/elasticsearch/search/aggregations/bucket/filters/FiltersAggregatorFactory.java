@@ -43,9 +43,9 @@ public class FiltersAggregatorFactory extends AggregatorFactory<FiltersAggregato
     private final String otherBucketKey;
 
     public FiltersAggregatorFactory(String name, Type type, List<KeyedFilter> filters, boolean keyed, boolean otherBucket,
-            String otherBucketKey, AggregationContext context, AggregatorFactory<?> parent, AggregatorFactories.Builder subFactories,
-            Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactories, metaData);
+            String otherBucketKey, AggregationContext context, AggregatorFactory<?> parent, AggregatorFactories.Builder subFactories)
+            throws IOException {
+        super(name, type, context, parent, subFactories);
         this.keyed = keyed;
         this.otherBucket = otherBucket;
         this.otherBucketKey = otherBucketKey;
@@ -61,10 +61,8 @@ public class FiltersAggregatorFactory extends AggregatorFactory<FiltersAggregato
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
-        return new FiltersAggregator(name, factories, keys, weights, keyed, otherBucket ? otherBucketKey : null, context, parent,
-                pipelineAggregators, metaData);
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
+        return new FiltersAggregator(name, factories, keys, weights, keyed, otherBucket ? otherBucketKey : null, context, parent);
     }
 
 

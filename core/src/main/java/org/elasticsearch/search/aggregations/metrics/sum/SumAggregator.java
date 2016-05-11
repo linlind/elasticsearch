@@ -29,13 +29,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -48,8 +45,8 @@ public class SumAggregator extends NumericMetricsAggregator.SingleValue {
     DoubleArray sums;
 
     public SumAggregator(String name, ValuesSource.Numeric valuesSource, DocValueFormat formatter, AggregationContext context,
-            Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        super(name, context, parent, pipelineAggregators, metaData);
+            Aggregator parent) throws IOException {
+        super(name, context, parent);
         this.valuesSource = valuesSource;
         this.format = formatter;
         if (valuesSource != null) {
@@ -98,12 +95,12 @@ public class SumAggregator extends NumericMetricsAggregator.SingleValue {
         if (valuesSource == null || bucket >= sums.size()) {
             return buildEmptyAggregation();
         }
-        return new InternalSum(name, sums.get(bucket), format, pipelineAggregators(), metaData());
+        return new InternalSum(name, sums.get(bucket), format);
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalSum(name, 0.0, format, pipelineAggregators(), metaData());
+        return new InternalSum(name, 0.0, format);
     }
 
     @Override

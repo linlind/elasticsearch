@@ -67,7 +67,7 @@ public class DateHistogramAggregatorFactory extends AbstractHistogramAggregatorF
             ExtendedBounds extendedBounds, AggregationContext context, AggregatorFactory<?> parent,
             AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
         super(name, type, config, interval, offset, order, keyed, minDocCount, extendedBounds, InternalDateHistogram.HISTOGRAM_FACTORY,
-                context, parent, subFactoriesBuilder, metaData);
+                context, parent, subFactoriesBuilder);
         this.dateHistogramInterval = dateHistogramInterval;
     }
 

@@ -25,7 +25,6 @@ import org.elasticsearch.search.aggregations.AggregatorFactory;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator.Range;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator.Unmapped;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 import org.elasticsearch.search.aggregations.support.ValuesSource.Numeric;
@@ -34,7 +33,6 @@ import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class AbstractRangeAggregatorFactory<AF extends AbstractRangeAggregatorFactory<AF, R>, R extends Range>
         extends ValuesSourceAggregatorFactory<ValuesSource.Numeric, AF> {
@@ -45,24 +43,22 @@ public class AbstractRangeAggregatorFactory<AF extends AbstractRangeAggregatorFa
 
     public AbstractRangeAggregatorFactory(String name, Type type, ValuesSourceConfig<Numeric> config, List<R> ranges, boolean keyed,
             InternalRange.Factory<?, ?> rangeFactory, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
-        super(name, type, config, context, parent, subFactoriesBuilder, metaData);
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        super(name, type, config, context, parent, subFactoriesBuilder);
         this.ranges = ranges;
         this.keyed = keyed;
         this.rangeFactory = rangeFactory;
     }
 
     @Override
-    protected Aggregator createUnmapped(Aggregator parent, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-            throws IOException {
-        return new Unmapped<R>(name, ranges, keyed, config.format(), context, parent, rangeFactory, pipelineAggregators, metaData);
+    protected Aggregator createUnmapped(Aggregator parent) throws IOException {
+        return new Unmapped<R>(name, ranges, keyed, config.format(), context, parent, rangeFactory);
     }
 
     @Override
-    protected Aggregator doCreateInternal(ValuesSource.Numeric valuesSource, Aggregator parent, boolean collectsFromSingleBucket,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        return new RangeAggregator(name, factories, valuesSource, config.format(), rangeFactory, ranges, keyed, context, parent,
-                pipelineAggregators, metaData);
+    protected Aggregator doCreateInternal(ValuesSource.Numeric valuesSource, Aggregator parent, boolean collectsFromSingleBucket)
+            throws IOException {
+        return new RangeAggregator(name, factories, valuesSource, config.format(), rangeFactory, ranges, keyed, context, parent);
     }
 
 

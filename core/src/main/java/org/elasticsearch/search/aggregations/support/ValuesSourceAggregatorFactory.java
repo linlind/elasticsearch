@@ -23,12 +23,9 @@ import org.elasticsearch.search.aggregations.Aggregator;
 import org.elasticsearch.search.aggregations.AggregatorFactories;
 import org.elasticsearch.search.aggregations.AggregatorFactory;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public abstract class ValuesSourceAggregatorFactory<VS extends ValuesSource, AF extends ValuesSourceAggregatorFactory<VS, AF>>
         extends AggregatorFactory<AF> {
@@ -36,8 +33,8 @@ public abstract class ValuesSourceAggregatorFactory<VS extends ValuesSource, AF 
     protected ValuesSourceConfig<VS> config;
 
     public ValuesSourceAggregatorFactory(String name, Type type, ValuesSourceConfig<VS> config, AggregationContext context,
-            AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactoriesBuilder, metaData);
+            AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        super(name, type, context, parent, subFactoriesBuilder);
         this.config = config;
     }
 
@@ -46,20 +43,18 @@ public abstract class ValuesSourceAggregatorFactory<VS extends ValuesSource, AF 
         }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
         VS vs = context.valuesSource(config, context.searchContext());
         if (vs == null) {
-            return createUnmapped(parent, pipelineAggregators, metaData);
+            return createUnmapped(parent);
         }
-        return doCreateInternal(vs, parent, collectsFromSingleBucket, pipelineAggregators, metaData);
+        return doCreateInternal(vs, parent, collectsFromSingleBucket);
     }
 
-    protected abstract Aggregator createUnmapped(Aggregator parent,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException;
+    protected abstract Aggregator createUnmapped(Aggregator parent) throws IOException;
 
     protected abstract Aggregator doCreateInternal(VS valuesSource, Aggregator parent,
-            boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
+            boolean collectsFromSingleBucket)
             throws IOException;
 
 }

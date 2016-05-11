@@ -216,7 +216,7 @@ public class GeoDistanceAggregatorBuilder extends ValuesSourceAggregatorBuilder<
             ValuesSourceConfig<ValuesSource.GeoPoint> config, AggregatorFactory<?> parent, Builder subFactoriesBuilder)
                     throws IOException {
         return new GeoDistanceRangeAggregatorFactory(name, type, config, origin, ranges, unit, distanceType, keyed, context, parent,
-                subFactoriesBuilder, metaData);
+                subFactoriesBuilder);
     }
 
     @Override

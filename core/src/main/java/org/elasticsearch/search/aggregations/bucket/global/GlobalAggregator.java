@@ -36,9 +36,8 @@ import java.util.Map;
  */
 public class GlobalAggregator extends SingleBucketAggregator {
 
-    public GlobalAggregator(String name, AggregatorFactories subFactories, AggregationContext aggregationContext, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
-        super(name, subFactories, aggregationContext, null, pipelineAggregators, metaData);
+    public GlobalAggregator(String name, AggregatorFactories subFactories, AggregationContext aggregationContext) throws IOException {
+        super(name, subFactories, aggregationContext, null);
     }
 
     @Override
@@ -56,8 +55,7 @@ public class GlobalAggregator extends SingleBucketAggregator {
     @Override
     public InternalAggregation buildAggregation(long owningBucketOrdinal) throws IOException {
         assert owningBucketOrdinal == 0 : "global aggregator can only be a top level aggregator";
-        return new InternalGlobal(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal), pipelineAggregators(),
-                metaData());
+        return new InternalGlobal(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal));
     }
 
     @Override

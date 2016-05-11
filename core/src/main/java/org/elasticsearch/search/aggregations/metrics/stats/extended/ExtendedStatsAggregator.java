@@ -31,13 +31,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -56,11 +53,9 @@ public class ExtendedStatsAggregator extends NumericMetricsAggregator.MultiValue
     DoubleArray maxes;
     DoubleArray sumOfSqrs;
 
-    public ExtendedStatsAggregator(String name, ValuesSource.Numeric valuesSource, DocValueFormat formatter,
-            AggregationContext context, Aggregator parent, double sigma, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData)
-            throws IOException {
-        super(name, context, parent, pipelineAggregators, metaData);
+    public ExtendedStatsAggregator(String name, ValuesSource.Numeric valuesSource, DocValueFormat formatter, AggregationContext context,
+            Aggregator parent, double sigma) throws IOException {
+        super(name, context, parent);
         this.valuesSource = valuesSource;
         this.format = formatter;
         this.sigma = sigma;
@@ -186,14 +181,12 @@ public class ExtendedStatsAggregator extends NumericMetricsAggregator.MultiValue
             return buildEmptyAggregation();
         }
         return new InternalExtendedStats(name, counts.get(bucket), sums.get(bucket),
-                mins.get(bucket), maxes.get(bucket), sumOfSqrs.get(bucket), sigma, format,
-                pipelineAggregators(), metaData());
+                mins.get(bucket), maxes.get(bucket), sumOfSqrs.get(bucket), sigma, format);
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalExtendedStats(name, 0, 0d, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0d, sigma, format, pipelineAggregators(),
-                metaData());
+        return new InternalExtendedStats(name, 0, 0d, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0d, sigma, format);
     }
 
     @Override

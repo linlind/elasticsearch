@@ -20,10 +20,7 @@
 package org.elasticsearch.search.aggregations;
 
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.util.List;
-import java.util.Map;
 
 public abstract class InternalMultiBucketAggregation<A extends InternalMultiBucketAggregation, B extends InternalMultiBucketAggregation.InternalBucket>
         extends InternalAggregation implements MultiBucketsAggregation {
@@ -31,14 +28,14 @@ public abstract class InternalMultiBucketAggregation<A extends InternalMultiBuck
     public InternalMultiBucketAggregation() {
     }
 
-    public InternalMultiBucketAggregation(String name, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalMultiBucketAggregation(String name) {
+        super(name);
     }
 
     /**
      * Create a new copy of this {@link Aggregation} with the same settings as
      * this {@link Aggregation} and contains the provided buckets.
-     * 
+     *
      * @param buckets
      *            the buckets to use in the new {@link Aggregation}
      * @return the new {@link Aggregation}
@@ -48,7 +45,7 @@ public abstract class InternalMultiBucketAggregation<A extends InternalMultiBuck
     /**
      * Create a new {@link InternalBucket} using the provided prototype bucket
      * and aggregations.
-     * 
+     *
      * @param aggregations
      *            the aggregations for the new bucket
      * @param prototype

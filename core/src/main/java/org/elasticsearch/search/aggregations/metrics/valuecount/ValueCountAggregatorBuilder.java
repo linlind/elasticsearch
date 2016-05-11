@@ -62,7 +62,7 @@ public class ValueCountAggregatorBuilder extends ValuesSourceAggregatorBuilder.L
     @Override
     protected ValueCountAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<ValuesSource> config,
             AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
-        return new ValueCountAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder, metaData);
+        return new ValueCountAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder);
     }
 
     @Override

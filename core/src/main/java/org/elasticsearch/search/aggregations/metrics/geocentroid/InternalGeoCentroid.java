@@ -27,11 +27,8 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Serialization and merge logic for {@link org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroidAggregator}
@@ -58,9 +55,8 @@ public class InternalGeoCentroid extends InternalMetricsAggregation implements G
     protected InternalGeoCentroid() {
     }
 
-    public InternalGeoCentroid(String name, GeoPoint centroid, long count, List<PipelineAggregator>
-            pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalGeoCentroid(String name, GeoPoint centroid, long count) {
+        super(name);
         this.centroid = centroid;
         assert count >= 0;
         this.count = count;
@@ -100,7 +96,7 @@ public class InternalGeoCentroid extends InternalMetricsAggregation implements G
             }
         }
         final GeoPoint result = (Double.isNaN(lonSum)) ? null : new GeoPoint(latSum/totalCount, lonSum/totalCount);
-        return new InternalGeoCentroid(name, result, totalCount, pipelineAggregators(), getMetaData());
+        return new InternalGeoCentroid(name, result, totalCount);
     }
 
     @Override

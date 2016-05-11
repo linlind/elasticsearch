@@ -25,11 +25,8 @@ import org.elasticsearch.search.DocValueFormat;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalNumericMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
 *
@@ -55,9 +52,8 @@ public class InternalSum extends InternalNumericMetricsAggregation.SingleValue i
 
     InternalSum() {} // for serialization
 
-    InternalSum(String name, double sum, DocValueFormat formatter, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    InternalSum(String name, double sum, DocValueFormat formatter) {
+        super(name);
         this.sum = sum;
         this.format = formatter;
     }
@@ -83,7 +79,7 @@ public class InternalSum extends InternalNumericMetricsAggregation.SingleValue i
         for (InternalAggregation aggregation : aggregations) {
             sum += ((InternalSum) aggregation).sum;
         }
-        return new InternalSum(name, sum, format, pipelineAggregators(), getMetaData());
+        return new InternalSum(name, sum, format);
     }
 
     @Override

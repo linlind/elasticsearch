@@ -35,15 +35,14 @@ public class SamplerAggregatorFactory extends AggregatorFactory<SamplerAggregato
     private final int shardSize;
 
     public SamplerAggregatorFactory(String name, Type type, int shardSize, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactories, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactories, metaData);
+            AggregatorFactories.Builder subFactories) throws IOException {
+        super(name, type, context, parent, subFactories);
         this.shardSize = shardSize;
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
-        return new SamplerAggregator(name, shardSize, factories, context, parent, pipelineAggregators, metaData);
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
+        return new SamplerAggregator(name, shardSize, factories, context, parent);
     }
 
 }

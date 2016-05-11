@@ -132,7 +132,7 @@ public class GeoGridAggregatorBuilder extends ValuesSourceAggregatorBuilder<Valu
             shardSize = requiredSize;
         }
         return new GeoHashGridAggregatorFactory(name, type, config, precision, requiredSize, shardSize, context, parent,
-                subFactoriesBuilder, metaData);
+                subFactoriesBuilder);
     }
 
     @Override

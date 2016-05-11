@@ -170,10 +170,10 @@ public class PercentilesAggregatorBuilder extends LeafOnly<ValuesSource.Numeric,
         switch (method) {
         case TDIGEST:
             return new TDigestPercentilesAggregatorFactory(name, type, config, percents, compression, keyed, context, parent,
-                    subFactoriesBuilder, metaData);
+                    subFactoriesBuilder);
         case HDR:
             return new HDRPercentilesAggregatorFactory(name, type, config, percents, numberOfSignificantValueDigits, keyed, context, parent,
-                    subFactoriesBuilder, metaData);
+                    subFactoriesBuilder);
         default:
             throw new IllegalStateException("Illegal method [" + method.getName() + "]");
         }

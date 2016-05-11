@@ -27,29 +27,25 @@ import org.elasticsearch.search.aggregations.Aggregator;
 import org.elasticsearch.search.aggregations.AggregatorFactories;
 import org.elasticsearch.search.aggregations.AggregatorFactory;
 import org.elasticsearch.search.aggregations.InternalAggregation.Type;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class FilterAggregatorFactory extends AggregatorFactory<FilterAggregatorFactory> {
 
     private final Weight weight;
 
     public FilterAggregatorFactory(String name, Type type, QueryBuilder filterBuilder, AggregationContext context,
-            AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactoriesBuilder, metaData);
+            AggregatorFactory<?> parent, AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        super(name, type, context, parent, subFactoriesBuilder);
         IndexSearcher contextSearcher = context.searchContext().searcher();
         Query filter = filterBuilder.toQuery(context.searchContext().getQueryShardContext());
         weight = contextSearcher.createNormalizedWeight(filter, false);
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
-        return new FilterAggregator(name, weight, factories, context, parent, pipelineAggregators, metaData);
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
+        return new FilterAggregator(name, weight, factories, context, parent);
     }
 
 }

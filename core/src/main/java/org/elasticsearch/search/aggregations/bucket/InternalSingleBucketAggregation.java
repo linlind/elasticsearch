@@ -24,12 +24,9 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.InternalAggregations;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A base class for all the single bucket aggregations.
@@ -48,8 +45,8 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
      * @param docCount      The document count in the single bucket.
      * @param aggregations  The already built sub-aggregations that are associated with the bucket.
      */
-    protected InternalSingleBucketAggregation(String name, long docCount, InternalAggregations aggregations, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    protected InternalSingleBucketAggregation(String name, long docCount, InternalAggregations aggregations) {
+        super(name);
         this.docCount = docCount;
         this.aggregations = aggregations;
     }
@@ -67,7 +64,7 @@ public abstract class InternalSingleBucketAggregation extends InternalAggregatio
     /**
      * Create a new copy of this {@link Aggregation} with the same settings as
      * this {@link Aggregation} and contains the provided sub-aggregations.
-     * 
+     *
      * @param subAggregations
      *            the buckets to use in the new {@link Aggregation}
      * @return the new {@link Aggregation}

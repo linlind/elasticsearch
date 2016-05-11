@@ -30,12 +30,10 @@ import org.elasticsearch.search.aggregations.InternalMultiBucketAggregation;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
 import org.elasticsearch.search.aggregations.pipeline.BucketHelpers;
 import org.elasticsearch.search.aggregations.pipeline.BucketHelpers.GapPolicy;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.pipeline.SiblingPipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationPath;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +75,7 @@ public abstract class BucketMetricsPipelineAggregator extends SiblingPipelineAgg
                 }
             }
         }
-        return buildAggregation(Collections.emptyList(), metaData());
+        return buildAggregation(metaData());
     }
 
     /**
@@ -90,13 +88,8 @@ public abstract class BucketMetricsPipelineAggregator extends SiblingPipelineAgg
     /**
      * Called after a collection run is finished to build the aggregation for
      * the collected state.
-     *
-     * @param pipelineAggregators
-     *            the pipeline aggregators to add to the resulting aggregation
-     * @param metadata
-     *            the metadata to add to the resulting aggregation
      */
-    protected abstract InternalAggregation buildAggregation(List<PipelineAggregator> pipelineAggregators, Map<String, Object> metadata);
+    protected abstract InternalAggregation buildAggregation(Map<String, Object> metaData);
 
     /**
      * Called for each bucket with a value so the state can be modified based on

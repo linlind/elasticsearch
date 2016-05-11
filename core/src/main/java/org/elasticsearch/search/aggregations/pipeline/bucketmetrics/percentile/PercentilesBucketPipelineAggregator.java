@@ -83,7 +83,7 @@ public class PercentilesBucketPipelineAggregator extends BucketMetricsPipelineAg
     }
 
     @Override
-    protected InternalAggregation buildAggregation(List<PipelineAggregator> pipelineAggregators, Map<String, Object> metadata) {
+    protected InternalAggregation buildAggregation(Map<String, Object> metadata) {
 
         // Perform the sorting and percentile collection now that all the data
         // has been collected.
@@ -103,7 +103,7 @@ public class PercentilesBucketPipelineAggregator extends BucketMetricsPipelineAg
 
         // todo need postCollection() to clean up temp sorted data?
 
-        return new InternalPercentilesBucket(name(), percents, percentiles, format, pipelineAggregators, metadata);
+        return new InternalPercentilesBucket(name(), percents, percentiles, format, metadata);
     }
 
     @Override

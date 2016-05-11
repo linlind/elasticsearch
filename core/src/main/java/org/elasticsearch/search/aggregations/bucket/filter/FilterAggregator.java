@@ -28,12 +28,9 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Aggregate all docs that match a filter.
@@ -42,13 +39,9 @@ public class FilterAggregator extends SingleBucketAggregator {
 
     private final Weight filter;
 
-    public FilterAggregator(String name,
-                            Weight filter,
-                            AggregatorFactories factories,
-                            AggregationContext aggregationContext,
-                            Aggregator parent, List<PipelineAggregator> pipelineAggregators,
-                            Map<String, Object> metaData) throws IOException {
-        super(name, factories, aggregationContext, parent, pipelineAggregators, metaData);
+    public FilterAggregator(String name, Weight filter, AggregatorFactories factories, AggregationContext aggregationContext,
+            Aggregator parent) throws IOException {
+        super(name, factories, aggregationContext, parent);
         this.filter = filter;
     }
 
@@ -69,13 +62,12 @@ public class FilterAggregator extends SingleBucketAggregator {
 
     @Override
     public InternalAggregation buildAggregation(long owningBucketOrdinal) throws IOException {
-        return new InternalFilter(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal), pipelineAggregators(),
-                metaData());
+        return new InternalFilter(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal));
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalFilter(name, 0, buildEmptySubAggregations(), pipelineAggregators(), metaData());
+        return new InternalFilter(name, 0, buildEmptySubAggregations());
     }
 }
 

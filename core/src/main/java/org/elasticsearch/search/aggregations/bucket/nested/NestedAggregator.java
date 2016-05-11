@@ -57,8 +57,9 @@ public class NestedAggregator extends SingleBucketAggregator {
     private DocIdSetIterator childDocs;
     private BitSet parentDocs;
 
-    public NestedAggregator(String name, AggregatorFactories factories, ObjectMapper objectMapper, AggregationContext aggregationContext, Aggregator parentAggregator, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) throws IOException {
-        super(name, factories, aggregationContext, parentAggregator, pipelineAggregators, metaData);
+    public NestedAggregator(String name, AggregatorFactories factories, ObjectMapper objectMapper, AggregationContext aggregationContext,
+            Aggregator parentAggregator) throws IOException {
+        super(name, factories, aggregationContext, parentAggregator);
         childFilter = objectMapper.nestedTypeFilter();
     }
 
@@ -123,13 +124,12 @@ public class NestedAggregator extends SingleBucketAggregator {
 
     @Override
     public InternalAggregation buildAggregation(long owningBucketOrdinal) throws IOException {
-        return new InternalNested(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal), pipelineAggregators(),
-                metaData());
+        return new InternalNested(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal));
     }
 
         @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalNested(name, 0, buildEmptySubAggregations(), pipelineAggregators(), metaData());
+        return new InternalNested(name, 0, buildEmptySubAggregations());
     }
 
     private static Query findClosestNestedPath(Aggregator parent) {

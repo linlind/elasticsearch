@@ -44,14 +44,11 @@ import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms.Bucket;
 import org.elasticsearch.search.aggregations.bucket.terms.support.BucketPriorityQueue;
 import org.elasticsearch.search.aggregations.bucket.terms.support.IncludeExclude;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * An aggregator of string values that relies on global ordinals in order to build buckets.
@@ -74,10 +71,8 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
     public GlobalOrdinalsStringTermsAggregator(String name, AggregatorFactories factories, ValuesSource.Bytes.WithOrdinals valuesSource,
            Terms.Order order, DocValueFormat format, BucketCountThresholds bucketCountThresholds,
            IncludeExclude.OrdinalsFilter includeExclude, AggregationContext aggregationContext, Aggregator parent,
-           SubAggCollectionMode collectionMode, boolean showTermDocCountError, List<PipelineAggregator> pipelineAggregators,
-           Map<String, Object> metaData) throws IOException {
-        super(name, factories, aggregationContext, parent, order, format, bucketCountThresholds, collectionMode, showTermDocCountError,
-                pipelineAggregators, metaData);
+            SubAggCollectionMode collectionMode, boolean showTermDocCountError) throws IOException {
+        super(name, factories, aggregationContext, parent, order, format, bucketCountThresholds, collectionMode, showTermDocCountError);
         this.valuesSource = valuesSource;
         this.includeExclude = includeExclude;
     }
@@ -202,8 +197,7 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
         }
 
         return new StringTerms(name, order, format, bucketCountThresholds.getRequiredSize(), bucketCountThresholds.getShardSize(),
-                bucketCountThresholds.getMinDocCount(), Arrays.asList(list), showTermDocCountError, 0, otherDocCount, pipelineAggregators(),
-                metaData());
+                bucketCountThresholds.getMinDocCount(), Arrays.asList(list), showTermDocCountError, 0, otherDocCount);
     }
 
     /**
@@ -269,10 +263,9 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
         public WithHash(String name, AggregatorFactories factories, ValuesSource.Bytes.WithOrdinals valuesSource, Terms.Order order,
                 DocValueFormat format, BucketCountThresholds bucketCountThresholds, IncludeExclude.OrdinalsFilter includeExclude,
                 AggregationContext aggregationContext, Aggregator parent, SubAggCollectionMode collectionMode,
-                boolean showTermDocCountError, List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData)
-                        throws IOException {
+                boolean showTermDocCountError) throws IOException {
             super(name, factories, valuesSource, order, format, bucketCountThresholds, includeExclude, aggregationContext, parent, collectionMode,
-                    showTermDocCountError, pipelineAggregators, metaData);
+                    showTermDocCountError);
             bucketOrds = new LongHash(1, aggregationContext.bigArrays());
         }
 
@@ -342,10 +335,9 @@ public class GlobalOrdinalsStringTermsAggregator extends AbstractStringTermsAggr
         public LowCardinality(String name, AggregatorFactories factories, ValuesSource.Bytes.WithOrdinals valuesSource,
                 Terms.Order order, DocValueFormat format,
                 BucketCountThresholds bucketCountThresholds, AggregationContext aggregationContext, Aggregator parent,
-                SubAggCollectionMode collectionMode, boolean showTermDocCountError, List<PipelineAggregator> pipelineAggregators,
-                Map<String, Object> metaData) throws IOException {
+                SubAggCollectionMode collectionMode, boolean showTermDocCountError) throws IOException {
             super(name, factories, valuesSource, order, format, bucketCountThresholds, null, aggregationContext, parent, collectionMode,
-                    showTermDocCountError, pipelineAggregators, metaData);
+                    showTermDocCountError);
             assert factories == null || factories.countAggregators() == 0;
             this.segmentDocCounts = context.bigArrays().newIntArray(1, true);
         }

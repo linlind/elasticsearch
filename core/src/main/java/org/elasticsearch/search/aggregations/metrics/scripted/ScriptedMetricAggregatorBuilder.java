@@ -185,7 +185,7 @@ public class ScriptedMetricAggregatorBuilder extends AggregatorBuilder<ScriptedM
     protected ScriptedMetricAggregatorFactory doBuild(AggregationContext context, AggregatorFactory<?> parent,
             Builder subfactoriesBuilder) throws IOException {
         return new ScriptedMetricAggregatorFactory(name, type, initScript, mapScript, combineScript, reduceScript, params, context,
-                parent, subfactoriesBuilder, metaData);
+                parent, subfactoriesBuilder);
     }
 
     @Override

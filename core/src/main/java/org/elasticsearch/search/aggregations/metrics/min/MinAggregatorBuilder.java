@@ -58,7 +58,7 @@ public class MinAggregatorBuilder extends ValuesSourceAggregatorBuilder.LeafOnly
     @Override
     protected MinAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new MinAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder, metaData);
+        return new MinAggregatorFactory(name, type, config, context, parent, subFactoriesBuilder);
     }
 
     @Override

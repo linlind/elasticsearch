@@ -31,13 +31,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.metrics.MetricsAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A geo metric aggregator that computes a geo-centroid from a {@code geo_point} type field
@@ -48,9 +45,8 @@ public final class GeoCentroidAggregator extends MetricsAggregator {
     LongArray counts;
 
     protected GeoCentroidAggregator(String name, AggregationContext aggregationContext, Aggregator parent,
-                                    ValuesSource.GeoPoint valuesSource, List<PipelineAggregator> pipelineAggregators,
-                                    Map<String, Object> metaData) throws IOException {
-        super(name, aggregationContext, parent, pipelineAggregators, metaData);
+            ValuesSource.GeoPoint valuesSource) throws IOException {
+        super(name, aggregationContext, parent);
         this.valuesSource = valuesSource;
         if (valuesSource != null) {
             final BigArrays bigArrays = context.bigArrays();
@@ -106,12 +102,12 @@ public final class GeoCentroidAggregator extends MetricsAggregator {
         final long bucketCount = counts.get(bucket);
         final GeoPoint bucketCentroid = (bucketCount > 0) ? GeoPoint.fromIndexLong(centroids.get(bucket)) :
                 new GeoPoint(Double.NaN, Double.NaN);
-        return new InternalGeoCentroid(name, bucketCentroid , bucketCount, pipelineAggregators(), metaData());
+        return new InternalGeoCentroid(name, bucketCentroid, bucketCount);
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalGeoCentroid(name, null, 0L, pipelineAggregators(), metaData());
+        return new InternalGeoCentroid(name, null, 0L);
     }
 
     @Override

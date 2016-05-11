@@ -39,37 +39,35 @@ public class NestedAggregatorFactory extends AggregatorFactory<NestedAggregatorF
     private final String path;
 
     public NestedAggregatorFactory(String name, Type type, String path, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactories, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactories, metaData);
+            AggregatorFactories.Builder subFactories) throws IOException {
+        super(name, type, context, parent, subFactories);
         this.path = path;
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
         if (collectsFromSingleBucket == false) {
             return asMultiBucketAggregator(this, context, parent);
         }
         ObjectMapper objectMapper = context.searchContext().getObjectMapper(path);
         if (objectMapper == null) {
-            return new Unmapped(name, context, parent, pipelineAggregators, metaData);
+            return new Unmapped(name, context, parent);
         }
         if (!objectMapper.nested().isNested()) {
             throw new AggregationExecutionException("[nested] nested path [" + path + "] is not nested");
         }
-        return new NestedAggregator(name, factories, objectMapper, context, parent, pipelineAggregators, metaData);
+        return new NestedAggregator(name, factories, objectMapper, context, parent);
     }
 
     private final static class Unmapped extends NonCollectingAggregator {
 
-        public Unmapped(String name, AggregationContext context, Aggregator parent, List<PipelineAggregator> pipelineAggregators,
-                Map<String, Object> metaData) throws IOException {
-            super(name, context, parent, pipelineAggregators, metaData);
+        public Unmapped(String name, AggregationContext context, Aggregator parent) throws IOException {
+            super(name, context, parent);
         }
 
         @Override
         public InternalAggregation buildEmptyAggregation() {
-            return new InternalNested(name, 0, buildEmptySubAggregations(), pipelineAggregators(), metaData());
+            return new InternalNested(name, 0, buildEmptySubAggregations());
         }
     }
 

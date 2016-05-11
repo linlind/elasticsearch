@@ -48,7 +48,7 @@ public class HistogramAggregatorBuilder extends AbstractHistogramBuilder<Histogr
     protected HistogramAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
         return new HistogramAggregatorFactory(name, type, config, interval, offset, order, keyed, minDocCount, extendedBounds, context,
-                parent, subFactoriesBuilder, metaData);
+                parent, subFactoriesBuilder);
     }
 
     @Override

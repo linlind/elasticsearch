@@ -31,14 +31,13 @@ import org.elasticsearch.search.aggregations.support.ValuesSourceConfig;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class DateRangeAggregatorFactory extends AbstractRangeAggregatorFactory<DateRangeAggregatorFactory, Range> {
 
     public DateRangeAggregatorFactory(String name, Type type, ValuesSourceConfig<Numeric> config, List<Range> ranges, boolean keyed,
             Factory<?, ?> rangeFactory, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactoriesBuilder, Map<String, Object> metaData) throws IOException {
-        super(name, type, config, ranges, keyed, rangeFactory, context, parent, subFactoriesBuilder, metaData);
+            AggregatorFactories.Builder subFactoriesBuilder) throws IOException {
+        super(name, type, config, ranges, keyed, rangeFactory, context, parent, subFactoriesBuilder);
     }
 
 }

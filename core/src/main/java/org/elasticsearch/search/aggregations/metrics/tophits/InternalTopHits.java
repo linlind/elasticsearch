@@ -31,13 +31,11 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationStreams;
 import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.metrics.InternalMetricsAggregation;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.internal.InternalSearchHit;
 import org.elasticsearch.search.internal.InternalSearchHits;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  */
@@ -66,9 +64,8 @@ public class InternalTopHits extends InternalMetricsAggregation implements TopHi
     InternalTopHits() {
     }
 
-    public InternalTopHits(String name, int from, int size, TopDocs topDocs, InternalSearchHits searchHits,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+    public InternalTopHits(String name, int from, int size, TopDocs topDocs, InternalSearchHits searchHits) {
+        super(name);
         this.from = from;
         this.size = size;
         this.topDocs = topDocs;
@@ -98,7 +95,7 @@ public class InternalTopHits extends InternalMetricsAggregation implements TopHi
                 shardDocs = new TopFieldDocs[aggregations.size()];
                 for (int i = 0; i < shardDocs.length; i++) {
                     InternalTopHits topHitsAgg = (InternalTopHits) aggregations.get(i);
-                    shardDocs[i] = (TopFieldDocs) topHitsAgg.topDocs;
+                    shardDocs[i] = topHitsAgg.topDocs;
                     shardHits[i] = topHitsAgg.searchHits;
                 }
                 reducedTopDocs = TopDocs.merge(sort, from, size, (TopFieldDocs[]) shardDocs);
@@ -123,8 +120,7 @@ public class InternalTopHits extends InternalMetricsAggregation implements TopHi
                 hits[i] = (InternalSearchHit) shardHits[scoreDoc.shardIndex].getAt(position);
             }
             return new InternalTopHits(name, from, size, reducedTopDocs, new InternalSearchHits(hits, reducedTopDocs.totalHits,
-                    reducedTopDocs.getMaxScore()),
-                    pipelineAggregators(), getMetaData());
+                    reducedTopDocs.getMaxScore()));
         } catch (IOException e) {
             throw ExceptionsHelper.convertToElastic(e);
         }

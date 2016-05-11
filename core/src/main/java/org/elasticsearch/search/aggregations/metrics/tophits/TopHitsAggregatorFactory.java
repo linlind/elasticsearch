@@ -61,8 +61,8 @@ public class TopHitsAggregatorFactory extends AggregatorFactory<TopHitsAggregato
     public TopHitsAggregatorFactory(String name, Type type, int from, int size, boolean explain, boolean version, boolean trackScores,
             List<SortBuilder<?>> sorts, HighlightBuilder highlightBuilder, List<String> fieldNames, List<String> fieldDataFields,
             Set<ScriptField> scriptFields, FetchSourceContext fetchSourceContext, AggregationContext context, AggregatorFactory<?> parent,
-            AggregatorFactories.Builder subFactories, Map<String, Object> metaData) throws IOException {
-        super(name, type, context, parent, subFactories, metaData);
+            AggregatorFactories.Builder subFactories) throws IOException {
+        super(name, type, context, parent, subFactories);
         this.from = from;
         this.size = size;
         this.explain = explain;
@@ -77,8 +77,7 @@ public class TopHitsAggregatorFactory extends AggregatorFactory<TopHitsAggregato
     }
 
     @Override
-    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
+    public Aggregator createInternal(Aggregator parent, boolean collectsFromSingleBucket) throws IOException {
         SubSearchContext subSearchContext = new SubSearchContext(context.searchContext());
         subSearchContext.parsedQuery(context.searchContext().parsedQuery());
         subSearchContext.explain(explain);
@@ -117,8 +116,7 @@ public class TopHitsAggregatorFactory extends AggregatorFactory<TopHitsAggregato
         if (highlightBuilder != null) {
             subSearchContext.highlight(highlightBuilder.build(context.searchContext().getQueryShardContext()));
         }
-        return new TopHitsAggregator(context.searchContext().fetchPhase(), subSearchContext, name, context, parent,
-                pipelineAggregators, metaData);
+        return new TopHitsAggregator(context.searchContext().fetchPhase(), subSearchContext, name, context, parent);
     }
 
 }

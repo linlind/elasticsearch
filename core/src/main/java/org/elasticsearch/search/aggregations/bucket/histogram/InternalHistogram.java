@@ -33,7 +33,6 @@ import org.elasticsearch.search.aggregations.InternalAggregations;
 import org.elasticsearch.search.aggregations.InternalMultiBucketAggregation;
 import org.elasticsearch.search.aggregations.bucket.BucketStreamContext;
 import org.elasticsearch.search.aggregations.bucket.BucketStreams;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.ValueType;
 
 import java.io.IOException;
@@ -42,7 +41,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * TODO should be renamed to InternalNumericHistogram (see comment on {@link Histogram})?
@@ -241,16 +239,13 @@ public class InternalHistogram<B extends InternalHistogram.Bucket> extends Inter
         }
 
         public InternalHistogram<B> create(String name, List<B> buckets, InternalOrder order, long minDocCount,
-                EmptyBucketInfo emptyBucketInfo, DocValueFormat formatter, boolean keyed,
-                List<PipelineAggregator> pipelineAggregators,
-                Map<String, Object> metaData) {
-            return new InternalHistogram<>(name, buckets, order, minDocCount, emptyBucketInfo, formatter, keyed, this, pipelineAggregators,
-                    metaData);
+                EmptyBucketInfo emptyBucketInfo, DocValueFormat formatter, boolean keyed) {
+            return new InternalHistogram<>(name, buckets, order, minDocCount, emptyBucketInfo, formatter, keyed, this);
         }
 
         public InternalHistogram<B> create(List<B> buckets, InternalHistogram<B> prototype) {
             return new InternalHistogram<>(prototype.name, buckets, prototype.order, prototype.minDocCount, prototype.emptyBucketInfo,
-                    prototype.format, prototype.keyed, this, prototype.pipelineAggregators(), prototype.metaData);
+                    prototype.format, prototype.keyed, this);
         }
 
         @SuppressWarnings("unchecked")
@@ -285,9 +280,8 @@ public class InternalHistogram<B extends InternalHistogram.Bucket> extends Inter
     InternalHistogram() {} // for serialization
 
     InternalHistogram(String name, List<B> buckets, InternalOrder order, long minDocCount, EmptyBucketInfo emptyBucketInfo,
-            DocValueFormat formatter, boolean keyed, Factory<B> factory, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) {
-        super(name, pipelineAggregators, metaData);
+            DocValueFormat formatter, boolean keyed, Factory<B> factory) {
+        super(name);
         this.buckets = buckets;
         this.order = order;
         assert (minDocCount == 0) == (emptyBucketInfo != null);
@@ -485,8 +479,7 @@ public class InternalHistogram<B extends InternalHistogram.Bucket> extends Inter
             CollectionUtil.introSort(reducedBuckets, order.comparator());
         }
 
-        return getFactory().create(getName(), reducedBuckets, order, minDocCount, emptyBucketInfo, format, keyed, pipelineAggregators(),
-                getMetaData());
+        return getFactory().create(getName(), reducedBuckets, order, minDocCount, emptyBucketInfo, format, keyed);
     }
 
     @Override

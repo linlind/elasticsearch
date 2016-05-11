@@ -75,7 +75,7 @@ public class ExtendedStatsAggregatorBuilder
     @Override
     protected ExtendedStatsAggregatorFactory innerBuild(AggregationContext context, ValuesSourceConfig<Numeric> config,
             AggregatorFactory<?> parent, Builder subFactoriesBuilder) throws IOException {
-        return new ExtendedStatsAggregatorFactory(name, type, config, sigma, context, parent, subFactoriesBuilder, metaData);
+        return new ExtendedStatsAggregatorFactory(name, type, config, sigma, context, parent, subFactoriesBuilder);
     }
 
     @Override

@@ -26,13 +26,10 @@ import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.LeafBucketCollector;
 import org.elasticsearch.search.aggregations.LeafBucketCollectorBase;
 import org.elasticsearch.search.aggregations.bucket.SingleBucketAggregator;
-import org.elasticsearch.search.aggregations.pipeline.PipelineAggregator;
 import org.elasticsearch.search.aggregations.support.AggregationContext;
 import org.elasticsearch.search.aggregations.support.ValuesSource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -42,9 +39,8 @@ public class MissingAggregator extends SingleBucketAggregator {
     private final ValuesSource valuesSource;
 
     public MissingAggregator(String name, AggregatorFactories factories, ValuesSource valuesSource,
-            AggregationContext aggregationContext, Aggregator parent, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData) throws IOException {
-        super(name, factories, aggregationContext, parent, pipelineAggregators, metaData);
+            AggregationContext aggregationContext, Aggregator parent) throws IOException {
+        super(name, factories, aggregationContext, parent);
         this.valuesSource = valuesSource;
     }
 
@@ -70,13 +66,12 @@ public class MissingAggregator extends SingleBucketAggregator {
 
     @Override
     public InternalAggregation buildAggregation(long owningBucketOrdinal) throws IOException {
-        return new InternalMissing(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal), pipelineAggregators(),
-                metaData());
+        return new InternalMissing(name, bucketDocCount(owningBucketOrdinal), bucketAggregations(owningBucketOrdinal));
     }
 
     @Override
     public InternalAggregation buildEmptyAggregation() {
-        return new InternalMissing(name, 0, buildEmptySubAggregations(), pipelineAggregators(), metaData());
+        return new InternalMissing(name, 0, buildEmptySubAggregations());
     }
 
 }

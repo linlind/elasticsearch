@@ -156,10 +156,8 @@ public class StringTerms extends InternalTerms<StringTerms, StringTerms.Bucket> 
     } // for serialization
 
     public StringTerms(String name, Terms.Order order, DocValueFormat format, int requiredSize, int shardSize, long minDocCount,
-            List<? extends InternalTerms.Bucket> buckets, boolean showTermDocCountError, long docCountError, long otherDocCount,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
-        super(name, order, format, requiredSize, shardSize, minDocCount, buckets, showTermDocCountError, docCountError, otherDocCount, pipelineAggregators,
-                metaData);
+            List<? extends InternalTerms.Bucket> buckets, boolean showTermDocCountError, long docCountError, long otherDocCount) {
+        super(name, order, format, requiredSize, shardSize, minDocCount, buckets, showTermDocCountError, docCountError, otherDocCount);
     }
 
     @Override
@@ -170,7 +168,7 @@ public class StringTerms extends InternalTerms<StringTerms, StringTerms.Bucket> 
     @Override
     public StringTerms create(List<Bucket> buckets) {
         return new StringTerms(this.name, this.order, this.format, this.requiredSize, this.shardSize, this.minDocCount, buckets,
-                this.showTermDocCountError, this.docCountError, this.otherDocCount, this.pipelineAggregators(), this.metaData);
+                this.showTermDocCountError, this.docCountError, this.otherDocCount);
     }
 
     @Override
@@ -182,7 +180,7 @@ public class StringTerms extends InternalTerms<StringTerms, StringTerms.Bucket> 
     protected StringTerms create(String name, List<org.elasticsearch.search.aggregations.bucket.terms.InternalTerms.Bucket> buckets,
             long docCountError, long otherDocCount, InternalTerms prototype) {
         return new StringTerms(name, prototype.order, prototype.format, prototype.requiredSize, prototype.shardSize, prototype.minDocCount, buckets,
-                prototype.showTermDocCountError, docCountError, otherDocCount, prototype.pipelineAggregators(), prototype.getMetaData());
+                prototype.showTermDocCountError, docCountError, otherDocCount);
     }
 
     @Override
