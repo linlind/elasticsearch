@@ -172,6 +172,9 @@ import org.elasticsearch.search.aggregations.metrics.geobounds.InternalGeoBounds
 import org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroidAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.geocentroid.GeoCentroidParser;
 import org.elasticsearch.search.aggregations.metrics.geocentroid.InternalGeoCentroid;
+import org.elasticsearch.search.aggregations.metrics.kmeans.GeoKMeansAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.kmeans.GeoKMeansParser;
+import org.elasticsearch.search.aggregations.metrics.kmeans.InternalGeoKMeans;
 import org.elasticsearch.search.aggregations.metrics.max.InternalMax;
 import org.elasticsearch.search.aggregations.metrics.max.MaxAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.max.MaxParser;
@@ -405,14 +408,14 @@ public class SearchModule extends AbstractModule {
                     .addResultReader(InternalHDRPercentiles.NAME, InternalHDRPercentiles::new));
         registerAggregation(new AggregationSpec(PercentileRanksAggregationBuilder.NAME, PercentileRanksAggregationBuilder::new,
                 new PercentileRanksParser())
-                        .addResultReader(InternalTDigestPercentileRanks.NAME, InternalTDigestPercentileRanks::new)
-                        .addResultReader(InternalHDRPercentileRanks.NAME, InternalHDRPercentileRanks::new));
+                    .addResultReader(InternalTDigestPercentileRanks.NAME, InternalTDigestPercentileRanks::new)
+                    .addResultReader(InternalHDRPercentileRanks.NAME, InternalHDRPercentileRanks::new));
         registerAggregation(new AggregationSpec(CardinalityAggregationBuilder.NAME, CardinalityAggregationBuilder::new,
                 new CardinalityParser()).addResultReader(InternalCardinality::new));
         registerAggregation(new AggregationSpec(GlobalAggregationBuilder.NAME, GlobalAggregationBuilder::new,
                 GlobalAggregationBuilder::parse).addResultReader(InternalGlobal::new));
         registerAggregation(new AggregationSpec(MissingAggregationBuilder.NAME, MissingAggregationBuilder::new, new MissingParser())
-                .addResultReader(InternalMissing::new));
+                        .addResultReader(InternalMissing::new));
         registerAggregation(new AggregationSpec(FilterAggregationBuilder.NAME, FilterAggregationBuilder::new,
                 FilterAggregationBuilder::parse).addResultReader(InternalFilter::new));
         registerAggregation(new AggregationSpec(FiltersAggregationBuilder.NAME, FiltersAggregationBuilder::new,
@@ -420,7 +423,7 @@ public class SearchModule extends AbstractModule {
         registerAggregation(new AggregationSpec(SamplerAggregationBuilder.NAME, SamplerAggregationBuilder::new,
                 SamplerAggregationBuilder::parse)
                     .addResultReader(InternalSampler.NAME, InternalSampler::new)
-                    .addResultReader(UnmappedSampler.NAME, UnmappedSampler::new));
+                        .addResultReader(UnmappedSampler.NAME, UnmappedSampler::new));
         registerAggregation(new AggregationSpec(DiversifiedAggregationBuilder.NAME, DiversifiedAggregationBuilder::new,
                 new DiversifiedSamplerParser())
                     /* Reuses result readers from SamplerAggregator*/);
@@ -439,7 +442,7 @@ public class SearchModule extends AbstractModule {
         registerAggregation(new AggregationSpec(DateRangeAggregationBuilder.NAME, DateRangeAggregationBuilder::new, new DateRangeParser())
                 .addResultReader(InternalDateRange::new));
         registerAggregation(new AggregationSpec(IpRangeAggregationBuilder.NAME, IpRangeAggregationBuilder::new, new IpRangeParser())
-                .addResultReader(InternalBinaryRange::new));
+                        .addResultReader(InternalBinaryRange::new));
         registerAggregation(new AggregationSpec(HistogramAggregationBuilder.NAME, HistogramAggregationBuilder::new, new HistogramParser())
                 .addResultReader(InternalHistogram::new));
         registerAggregation(new AggregationSpec(DateHistogramAggregationBuilder.NAME, DateHistogramAggregationBuilder::new,
@@ -448,6 +451,8 @@ public class SearchModule extends AbstractModule {
                 new GeoDistanceParser()).addResultReader(InternalGeoDistance::new));
         registerAggregation(new AggregationSpec(GeoGridAggregationBuilder.NAME, GeoGridAggregationBuilder::new, new GeoHashGridParser())
                 .addResultReader(InternalGeoHashGrid::new));
+        registerAggregation(new AggregationSpec(GeoKMeansAggregationBuilder::new, new GeoKMeansParser(),
+                GeoKMeansAggregationBuilder.AGGREGATION_NAME_FIED).addResultReader(InternalGeoKMeans::new));
         registerAggregation(new AggregationSpec(NestedAggregationBuilder.NAME, NestedAggregationBuilder::new,
                 NestedAggregationBuilder::parse).addResultReader(InternalNested::new));
         registerAggregation(new AggregationSpec(ReverseNestedAggregationBuilder.NAME, ReverseNestedAggregationBuilder::new,
