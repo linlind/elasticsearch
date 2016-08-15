@@ -19,14 +19,6 @@
 
 package org.elasticsearch.action;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.elasticsearch.action.admin.cluster.allocation.ClusterAllocationExplainAction;
 import org.elasticsearch.action.admin.cluster.allocation.TransportClusterAllocationExplainAction;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
@@ -44,6 +36,8 @@ import org.elasticsearch.action.admin.cluster.node.tasks.get.GetTaskAction;
 import org.elasticsearch.action.admin.cluster.node.tasks.get.TransportGetTaskAction;
 import org.elasticsearch.action.admin.cluster.node.tasks.list.ListTasksAction;
 import org.elasticsearch.action.admin.cluster.node.tasks.list.TransportListTasksAction;
+import org.elasticsearch.action.admin.cluster.node.usage.NodesUsageAction;
+import org.elasticsearch.action.admin.cluster.node.usage.TransportNodesUsageAction;
 import org.elasticsearch.action.admin.cluster.repositories.delete.DeleteRepositoryAction;
 import org.elasticsearch.action.admin.cluster.repositories.delete.TransportDeleteRepositoryAction;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesAction;
@@ -230,6 +224,7 @@ import org.elasticsearch.rest.action.admin.cluster.RestListTasksAction;
 import org.elasticsearch.rest.action.admin.cluster.RestNodesHotThreadsAction;
 import org.elasticsearch.rest.action.admin.cluster.RestNodesInfoAction;
 import org.elasticsearch.rest.action.admin.cluster.RestNodesStatsAction;
+import org.elasticsearch.rest.action.admin.cluster.RestNodesUsageAction;
 import org.elasticsearch.rest.action.admin.cluster.RestPendingClusterTasksAction;
 import org.elasticsearch.rest.action.admin.cluster.RestPutRepositoryAction;
 import org.elasticsearch.rest.action.admin.cluster.RestPutStoredScriptAction;
@@ -311,6 +306,13 @@ import org.elasticsearch.rest.action.termvectors.RestMultiTermVectorsAction;
 import org.elasticsearch.rest.action.termvectors.RestTermVectorsAction;
 import org.elasticsearch.rest.action.update.RestUpdateAction;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -367,6 +369,7 @@ public class ActionModule extends AbstractModule {
         actions.register(MainAction.INSTANCE, TransportMainAction.class);
         actions.register(NodesInfoAction.INSTANCE, TransportNodesInfoAction.class);
         actions.register(NodesStatsAction.INSTANCE, TransportNodesStatsAction.class);
+        actions.register(NodesUsageAction.INSTANCE, TransportNodesUsageAction.class);
         actions.register(NodesHotThreadsAction.INSTANCE, TransportNodesHotThreadsAction.class);
         actions.register(ListTasksAction.INSTANCE, TransportListTasksAction.class);
         actions.register(GetTaskAction.INSTANCE, TransportGetTaskAction.class);
@@ -481,6 +484,7 @@ public class ActionModule extends AbstractModule {
         registerRestHandler(handlers, RestMainAction.class);
         registerRestHandler(handlers, RestNodesInfoAction.class);
         registerRestHandler(handlers, RestNodesStatsAction.class);
+        registerRestHandler(handlers, RestNodesUsageAction.class);
         registerRestHandler(handlers, RestNodesHotThreadsAction.class);
         registerRestHandler(handlers, RestClusterAllocationExplainAction.class);
         registerRestHandler(handlers, RestClusterStatsAction.class);
