@@ -172,7 +172,6 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
         super.tearDown();
         clusterService.close();
         transportService.close();
-        usageService.close();
     }
 
     @AfterClass

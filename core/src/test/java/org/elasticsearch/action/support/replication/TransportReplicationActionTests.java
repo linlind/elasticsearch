@@ -139,7 +139,6 @@ public class TransportReplicationActionTests extends ESTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
         clusterService.close();
-        usageService.close();
     }
 
     @AfterClass

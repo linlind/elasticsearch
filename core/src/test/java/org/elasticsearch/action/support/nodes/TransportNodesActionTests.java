@@ -215,7 +215,6 @@ public class TransportNodesActionTests extends ESTestCase {
         super.tearDown();
         clusterService.close();
         transport.close();
-        usageService.close();
     }
 
     public TestTransportNodesAction getTestTransportNodesAction() {

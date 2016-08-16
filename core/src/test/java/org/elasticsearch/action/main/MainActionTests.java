@@ -113,7 +113,7 @@ public class MainActionTests extends ESTestCase {
         when(clusterService.state()).thenReturn(state);
 
         Discovery discovery = new NoopDiscovery();
-        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
         TransportMainAction action = new TransportMainAction(settings, mock(ThreadPool.class), mock(TransportService.class),
                 mock(ActionFilters.class), mock(IndexNameExpressionResolver.class), clusterService, usageService);
         AtomicReference<MainResponse> responseRef = new AtomicReference<>();

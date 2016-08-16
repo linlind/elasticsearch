@@ -110,7 +110,6 @@ public class BroadcastReplicationTests extends ESTestCase {
         super.tearDown();
         clusterService.close();
         transportService.close();
-        usageService.close();
     }
 
     @AfterClass

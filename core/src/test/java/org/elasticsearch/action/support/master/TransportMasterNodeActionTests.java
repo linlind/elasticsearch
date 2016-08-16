@@ -109,7 +109,6 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         super.tearDown();
         clusterService.close();
         transportService.close();
-        usageService.close();
     }
 
     @AfterClass

@@ -72,7 +72,7 @@ public class TransportMultiSearchActionTests extends ESTestCase {
         AtomicInteger counter = new AtomicInteger();
         AtomicReference<AssertionError> errorHolder = new AtomicReference<>();
         Discovery discovery = new NoopDiscovery();
-        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
         TransportAction<SearchRequest, SearchResponse> searchAction = new TransportAction<SearchRequest, SearchResponse>(Settings.EMPTY,
                 "action", threadPool, actionFilters, resolver, taskManager, usageService) {
             @Override
