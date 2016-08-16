@@ -32,6 +32,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Types exists transport action.
@@ -40,8 +41,10 @@ public class TransportTypesExistsAction extends TransportMasterNodeReadAction<Ty
 
     @Inject
     public TransportTypesExistsAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                      ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, TypesExistsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, TypesExistsRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, TypesExistsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                TypesExistsRequest::new, usageService);
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotsService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Transport action for create snapshot operation
@@ -43,9 +44,10 @@ public class TransportCreateSnapshotAction extends TransportMasterNodeAction<Cre
 
     @Inject
     public TransportCreateSnapshotAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                         ThreadPool threadPool, SnapshotsService snapshotsService, ActionFilters actionFilters,
-                                         IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, CreateSnapshotAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, CreateSnapshotRequest::new);
+            ThreadPool threadPool, SnapshotsService snapshotsService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, CreateSnapshotAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                CreateSnapshotRequest::new, usageService);
         this.snapshotsService = snapshotsService;
     }
 

@@ -60,6 +60,7 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Map;
 
@@ -84,9 +85,9 @@ public class TransportShardBulkAction extends TransportWriteAction<BulkShardRequ
     public TransportShardBulkAction(Settings settings, TransportService transportService, ClusterService clusterService,
                                     IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
                                     MappingUpdatedAction mappingUpdatedAction, UpdateHelper updateHelper, ActionFilters actionFilters,
-                                    IndexNameExpressionResolver indexNameExpressionResolver) {
+                                    IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, ACTION_NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
-                indexNameExpressionResolver, BulkShardRequest::new, ThreadPool.Names.BULK);
+                indexNameExpressionResolver, BulkShardRequest::new, ThreadPool.Names.BULK, usageService);
         this.updateHelper = updateHelper;
         this.allowIdGeneration = settings.getAsBoolean("action.allow_id_generation", true);
         this.mappingUpdatedAction = mappingUpdatedAction;

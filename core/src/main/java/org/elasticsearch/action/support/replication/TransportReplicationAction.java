@@ -65,6 +65,7 @@ import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponse.Empty;
+import org.elasticsearch.usage.UsageService;
 import org.elasticsearch.transport.TransportService;
 
 import java.io.IOException;
@@ -103,8 +104,9 @@ public abstract class TransportReplicationAction<
                                          ThreadPool threadPool, ShardStateAction shardStateAction,
                                          ActionFilters actionFilters,
                                          IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request,
-                                         Supplier<ReplicaRequest> replicaRequest, String executor) {
-        super(settings, actionName, threadPool, actionFilters, indexNameExpressionResolver, transportService.getTaskManager());
+                                         Supplier<ReplicaRequest> replicaRequest, String executor, UsageService usageService) {
+        super(settings, actionName, threadPool, actionFilters, indexNameExpressionResolver, transportService.getTaskManager(),
+                usageService);
         this.transportService = transportService;
         this.clusterService = clusterService;
         this.indicesService = indicesService;

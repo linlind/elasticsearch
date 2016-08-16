@@ -46,6 +46,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.shard.DocsStats;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Locale;
 import java.util.Set;
@@ -65,11 +66,11 @@ public class TransportRolloverAction extends TransportMasterNodeAction<RolloverR
 
     @Inject
     public TransportRolloverAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                   ThreadPool threadPool, MetaDataCreateIndexService createIndexService,
-                                   ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                   MetaDataIndexAliasesService indexAliasesService, Client client) {
+            ThreadPool threadPool, MetaDataCreateIndexService createIndexService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, MetaDataIndexAliasesService indexAliasesService, Client client,
+            UsageService usageService) {
         super(settings, RolloverAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
-            RolloverRequest::new);
+                RolloverRequest::new, usageService);
         this.createIndexService = createIndexService;
         this.indexAliasesService = indexAliasesService;
         this.client = client;

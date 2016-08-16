@@ -39,6 +39,7 @@ import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,8 +66,8 @@ public abstract class TransportNodesAction<NodesRequest extends BaseNodesRequest
                                    IndexNameExpressionResolver indexNameExpressionResolver,
                                    Supplier<NodesRequest> request, Supplier<NodeRequest> nodeRequest,
                                    String nodeExecutor,
-                                   Class<NodeResponse> nodeResponseClass) {
-        super(settings, actionName, threadPool, transportService, actionFilters, indexNameExpressionResolver, request);
+                                   Class<NodeResponse> nodeResponseClass, UsageService usageService) {
+        super(settings, actionName, threadPool, transportService, actionFilters, indexNameExpressionResolver, request, usageService);
         this.clusterService = Objects.requireNonNull(clusterService);
         this.transportService = Objects.requireNonNull(transportService);
         this.nodeResponseClass = Objects.requireNonNull(nodeResponseClass);

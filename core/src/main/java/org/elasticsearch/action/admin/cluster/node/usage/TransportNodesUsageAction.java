@@ -47,7 +47,7 @@ public class TransportNodesUsageAction
             TransportService transportService, NodeService nodeService, ActionFilters actionFilters,
             IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, NodesUsageAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                NodesUsageRequest::new, NodeUsageRequest::new, ThreadPool.Names.MANAGEMENT, NodeUsage.class);
+                NodesUsageRequest::new, NodeUsageRequest::new, ThreadPool.Names.MANAGEMENT, NodeUsage.class, usageService);
         this.usageService = usageService;
     }
 

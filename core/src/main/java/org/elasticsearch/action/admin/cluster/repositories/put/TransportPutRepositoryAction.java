@@ -33,6 +33,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.repositories.RepositoriesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Transport action for register repository operation
@@ -43,9 +44,10 @@ public class TransportPutRepositoryAction extends TransportMasterNodeAction<PutR
 
     @Inject
     public TransportPutRepositoryAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                        RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
-                                        IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, PutRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, PutRepositoryRequest::new);
+            RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, PutRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                PutRepositoryRequest::new, usageService);
         this.repositoriesService = repositoriesService;
     }
 

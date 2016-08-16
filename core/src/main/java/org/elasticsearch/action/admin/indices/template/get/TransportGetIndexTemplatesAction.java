@@ -33,6 +33,7 @@ import org.elasticsearch.common.regex.Regex;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +46,10 @@ public class TransportGetIndexTemplatesAction extends TransportMasterNodeReadAct
 
     @Inject
     public TransportGetIndexTemplatesAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, GetIndexTemplatesAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, GetIndexTemplatesRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, GetIndexTemplatesAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, GetIndexTemplatesRequest::new, usageService);
     }
 
     @Override

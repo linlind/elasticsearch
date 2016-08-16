@@ -32,6 +32,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.tasks.TaskInfo;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,10 +40,11 @@ import java.util.List;
 public class TransportRethrottleAction extends TransportTasksAction<BulkByScrollTask, RethrottleRequest, ListTasksResponse, TaskInfo> {
     @Inject
     public TransportRethrottleAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
         super(settings, RethrottleAction.NAME, threadPool, clusterService, transportService, actionFilters,
                 indexNameExpressionResolver, RethrottleRequest::new, () -> new ListTasksResponse(clusterService.state().nodes()),
-            ThreadPool.Names.MANAGEMENT);
+                ThreadPool.Names.MANAGEMENT, usageService);
     }
 
     @Override

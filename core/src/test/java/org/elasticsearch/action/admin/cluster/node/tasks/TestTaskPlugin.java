@@ -54,6 +54,7 @@ import org.elasticsearch.tasks.Task;
 import org.elasticsearch.tasks.TaskId;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -249,11 +250,11 @@ public class TestTaskPlugin extends Plugin implements ActionPlugin {
     public static class TransportTestTaskAction extends TransportNodesAction<NodesRequest, NodesResponse, NodeRequest, NodeResponse> {
 
         @Inject
-        public TransportTestTaskAction(Settings settings, ThreadPool threadPool,
-                                       ClusterService clusterService, TransportService transportService) {
-            super(settings, TestTaskAction.NAME, threadPool, clusterService, transportService,
-                  new ActionFilters(new HashSet<>()), new IndexNameExpressionResolver(Settings.EMPTY),
-                  NodesRequest::new, NodeRequest::new, ThreadPool.Names.GENERIC, NodeResponse.class);
+        public TransportTestTaskAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+                TransportService transportService, UsageService usageService) {
+            super(settings, TestTaskAction.NAME, threadPool, clusterService, transportService, new ActionFilters(new HashSet<>()),
+                    new IndexNameExpressionResolver(Settings.EMPTY), NodesRequest::new, NodeRequest::new, ThreadPool.Names.GENERIC,
+                    NodeResponse.class, usageService);
         }
 
         @Override
@@ -418,11 +419,10 @@ public class TestTaskPlugin extends Plugin implements ActionPlugin {
 
         @Inject
         public TransportUnblockTestTasksAction(Settings settings,ThreadPool threadPool, ClusterService
-            clusterService,
-                                               TransportService transportService) {
+        clusterService, TransportService transportService, UsageService usageService) {
             super(settings, UnblockTestTasksAction.NAME, threadPool, clusterService, transportService, new ActionFilters(new
                 HashSet<>()), new IndexNameExpressionResolver(Settings.EMPTY),
-                UnblockTestTasksRequest::new, UnblockTestTasksResponse::new, ThreadPool.Names.MANAGEMENT);
+                    UnblockTestTasksRequest::new, UnblockTestTasksResponse::new, ThreadPool.Names.MANAGEMENT, usageService);
         }
 
         @Override

@@ -28,6 +28,7 @@ import org.elasticsearch.common.settings.Setting.Property;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.function.Supplier;
 
@@ -44,16 +45,17 @@ public abstract class TransportMasterNodeReadAction<Request extends MasterNodeRe
     private final boolean forceLocal;
 
     protected TransportMasterNodeReadAction(Settings settings, String actionName, TransportService transportService,
-                                            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
-        this(settings, actionName, true, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,request);
+            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, UsageService usageService) {
+        this(settings, actionName, true, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, request,
+                usageService);
     }
 
     protected TransportMasterNodeReadAction(Settings settings, String actionName, boolean checkSizeLimit, TransportService transportService,
-                                            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
+            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, UsageService usageService) {
         super(settings, actionName, checkSizeLimit, transportService, clusterService, threadPool, actionFilters,
-            indexNameExpressionResolver,request);
+                indexNameExpressionResolver, request, usageService);
         this.forceLocal = FORCE_LOCAL_SETTING.get(settings);
     }
 

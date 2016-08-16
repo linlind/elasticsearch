@@ -28,6 +28,7 @@ import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.function.Supplier;
 
@@ -37,9 +38,10 @@ public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequ
         extends TransportMasterNodeReadAction<Request, Response> {
 
     public TransportClusterInfoAction(Settings settings, String actionName, TransportService transportService,
-                                      ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
-        super(settings, actionName, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, request);
+            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, UsageService usageService) {
+        super(settings, actionName, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, request,
+                usageService);
     }
 
     @Override

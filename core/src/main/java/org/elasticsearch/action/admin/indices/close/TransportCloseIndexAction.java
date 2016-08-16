@@ -39,6 +39,7 @@ import org.elasticsearch.index.Index;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Close index action
@@ -53,10 +54,11 @@ public class TransportCloseIndexAction extends TransportMasterNodeAction<CloseIn
 
     @Inject
     public TransportCloseIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                     ThreadPool threadPool, MetaDataIndexStateService indexStateService,
-                                     ClusterSettings clusterSettings, ActionFilters actionFilters,
-                                     IndexNameExpressionResolver indexNameExpressionResolver, DestructiveOperations destructiveOperations) {
-        super(settings, CloseIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, CloseIndexRequest::new);
+            ThreadPool threadPool, MetaDataIndexStateService indexStateService, ClusterSettings clusterSettings,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            DestructiveOperations destructiveOperations, UsageService usageService) {
+        super(settings, CloseIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                CloseIndexRequest::new, usageService);
         this.indexStateService = indexStateService;
         this.destructiveOperations = destructiveOperations;
         this.closeIndexEnabled = CLUSTER_INDICES_CLOSE_ENABLE_SETTING.get(settings);

@@ -33,12 +33,15 @@ import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.tasks.CancellableTask;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.tasks.TaskId;
 import org.elasticsearch.tasks.TaskInfo;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -139,11 +142,10 @@ public class CancellableTasksTests extends TaskManagerTestCase {
 
         final CountDownLatch actionStartedLatch;
 
-        CancellableTestNodesAction(Settings settings, String actionName, ThreadPool threadPool,
-                                   ClusterService clusterService, TransportService transportService, boolean shouldBlock, CountDownLatch
-                                       actionStartedLatch) {
+        CancellableTestNodesAction(Settings settings, String actionName, ThreadPool threadPool, ClusterService clusterService,
+                TransportService transportService, boolean shouldBlock, CountDownLatch actionStartedLatch, UsageService usageService) {
             super(settings, actionName, threadPool, clusterService, transportService, CancellableNodesRequest::new,
-                CancellableNodeRequest::new);
+                    CancellableNodeRequest::new, usageService);
             this.shouldBlock = shouldBlock;
             this.actionStartedLatch = actionStartedLatch;
         }
@@ -199,10 +201,12 @@ public class CancellableTasksTests extends TaskManagerTestCase {
         CountDownLatch actionLatch = waitForActionToStart ? new CountDownLatch(nodesCount) : null;
         CancellableTestNodesAction[] actions = new CancellableTestNodesAction[nodesCount];
         for (int i = 0; i < testNodes.length; i++) {
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, testNodes[i].clusterService.getSettings());
             boolean shouldBlock = blockOnNodes.contains(testNodes[i]);
             logger.info("The action in the node [{}] should block: [{}]", testNodes[i].discoveryNode.getId(), shouldBlock);
             actions[i] = new CancellableTestNodesAction(CLUSTER_SETTINGS, "testAction", threadPool, testNodes[i]
-                .clusterService, testNodes[i].transportService, shouldBlock, actionLatch);
+                    .clusterService, testNodes[i].transportService, shouldBlock, actionLatch, usageService);
         }
         Task task = actions[0].execute(request, listener);
         if (waitForActionToStart) {

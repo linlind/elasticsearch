@@ -36,6 +36,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.rest.action.admin.indices.AliasesNotFoundException;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,9 +53,10 @@ public class TransportIndicesAliasesAction extends TransportMasterNodeAction<Ind
 
     @Inject
     public TransportIndicesAliasesAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                         ThreadPool threadPool, MetaDataIndexAliasesService indexAliasesService,
-                                         ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, IndicesAliasesAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, IndicesAliasesRequest::new);
+            ThreadPool threadPool, MetaDataIndexAliasesService indexAliasesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, IndicesAliasesAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                IndicesAliasesRequest::new, usageService);
         this.indexAliasesService = indexAliasesService;
     }
 

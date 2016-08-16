@@ -47,12 +47,15 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.tasks.TaskId;
 import org.elasticsearch.tasks.TaskInfo;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.tasks.MockTaskManager;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -170,8 +173,8 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
     abstract class TestNodesAction extends AbstractTestNodesAction<NodesRequest, NodeRequest> {
 
         TestNodesAction(Settings settings, String actionName, ThreadPool threadPool,
-                        ClusterService clusterService, TransportService transportService) {
-            super(settings, actionName, threadPool, clusterService, transportService, NodesRequest::new, NodeRequest::new);
+                ClusterService clusterService, TransportService transportService, UsageService usageService) {
+            super(settings, actionName, threadPool, clusterService, transportService, NodesRequest::new, NodeRequest::new, usageService);
         }
 
         @Override
@@ -252,10 +255,10 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
     abstract static class TestTasksAction extends TransportTasksAction<Task, TestTasksRequest, TestTasksResponse, TestTaskResponse> {
 
         protected TestTasksAction(Settings settings, String actionName, ThreadPool threadPool,
-                ClusterService clusterService, TransportService transportService) {
+                ClusterService clusterService, TransportService transportService, UsageService usageService) {
             super(settings, actionName, threadPool, clusterService, transportService, new ActionFilters(new HashSet<>()),
                     new IndexNameExpressionResolver(Settings.EMPTY), TestTasksRequest::new, TestTasksResponse::new,
-                    ThreadPool.Names.MANAGEMENT);
+                    ThreadPool.Names.MANAGEMENT, usageService);
         }
 
         @Override
@@ -297,8 +300,10 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         TestNodesAction[] actions = new TestNodesAction[nodesCount];
         for (int i = 0; i < testNodes.length; i++) {
             final int node = i;
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, testNodes[i].clusterService.getSettings());
             actions[i] = new TestNodesAction(CLUSTER_SETTINGS, "testAction", threadPool, testNodes[i].clusterService,
-                    testNodes[i].transportService) {
+                    testNodes[i].transportService, usageService) {
                 @Override
                 protected NodeResponse nodeOperation(NodeRequest request) {
                     logger.info("Action on node {}", node);
@@ -582,8 +587,10 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         RecordingTaskManagerListener[] listeners = setupListeners(testNodes, "testAction*");
         for (int i = 0; i < testNodes.length; i++) {
             final int node = i;
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, testNodes[i].clusterService.getSettings());
             actions[i] = new TestNodesAction(CLUSTER_SETTINGS, "testAction", threadPool, testNodes[i].clusterService,
-                    testNodes[i].transportService) {
+                    testNodes[i].transportService, usageService) {
                 @Override
                 protected NodeResponse nodeOperation(NodeRequest request) {
                     logger.info("Action on node {}", node);
@@ -622,8 +629,10 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
         for (int i = 0; i < testNodes.length; i++) {
             final int node = i;
             // Simulate task action that fails on one of the tasks on one of the nodes
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, testNodes[i].clusterService.getSettings());
             tasksActions[i] = new TestTasksAction(CLUSTER_SETTINGS, "testTasksAction", threadPool, testNodes[i].clusterService,
-                    testNodes[i].transportService) {
+                    testNodes[i].transportService, usageService) {
                 @Override
                 protected TestTaskResponse taskOperation(TestTasksRequest request, Task task) {
                     logger.info("Task action on node {}", node);
@@ -680,8 +689,10 @@ public class TransportTasksActionTests extends TaskManagerTestCase {
             final int node = i;
             // Simulate a task action that works on all nodes except nodes listed in filterNodes.
             // We are testing that it works.
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, testNodes[i].clusterService.getSettings());
             tasksActions[i] = new TestTasksAction(CLUSTER_SETTINGS, "testTasksAction", threadPool,
-                testNodes[i].clusterService, testNodes[i].transportService) {
+                    testNodes[i].clusterService, testNodes[i].transportService, usageService) {
 
                 @Override
                 protected String[] filterNodeIds(DiscoveryNodes nodes, String[] nodesIds) {

@@ -19,7 +19,6 @@
 
 package org.elasticsearch.action.ingest;
 
-import org.elasticsearch.ElasticsearchParseException;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.support.ActionFilters;
 import org.elasticsearch.action.support.HandledTransportAction;
@@ -31,6 +30,7 @@ import org.elasticsearch.ingest.PipelineStore;
 import org.elasticsearch.node.service.NodeService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Map;
 
@@ -40,8 +40,11 @@ public class SimulatePipelineTransportAction extends HandledTransportAction<Simu
     private final SimulateExecutionService executionService;
 
     @Inject
-    public SimulatePipelineTransportAction(Settings settings, ThreadPool threadPool, TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, NodeService nodeService) {
-        super(settings, SimulatePipelineAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, SimulatePipelineRequest::new);
+    public SimulatePipelineTransportAction(Settings settings, ThreadPool threadPool, TransportService transportService,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, NodeService nodeService,
+            UsageService usageService) {
+        super(settings, SimulatePipelineAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                SimulatePipelineRequest::new, usageService);
         this.pipelineStore = nodeService.getIngestService().getPipelineStore();
         this.executionService = new SimulateExecutionService(threadPool);
     }

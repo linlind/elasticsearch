@@ -32,10 +32,13 @@ import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.LocalTransportAddress;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.tasks.TaskManager;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -68,8 +71,10 @@ public class TransportMultiSearchActionTests extends ESTestCase {
         int maxAllowedConcurrentSearches = scaledRandomIntBetween(1, 20);
         AtomicInteger counter = new AtomicInteger();
         AtomicReference<AssertionError> errorHolder = new AtomicReference<>();
-        TransportAction<SearchRequest, SearchResponse> searchAction = new TransportAction<SearchRequest, SearchResponse>
-                (Settings.EMPTY, "action", threadPool, actionFilters, resolver, taskManager) {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
+        TransportAction<SearchRequest, SearchResponse> searchAction = new TransportAction<SearchRequest, SearchResponse>(Settings.EMPTY,
+                "action", threadPool, actionFilters, resolver, taskManager, usageService) {
             @Override
             protected void doExecute(SearchRequest request, ActionListener<SearchResponse> listener) {
                 int currentConcurrentSearches = counter.incrementAndGet();
@@ -89,8 +94,8 @@ public class TransportMultiSearchActionTests extends ESTestCase {
                 );
             }
         };
-        TransportMultiSearchAction action =
-                new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService, searchAction, resolver, 10);
+        TransportMultiSearchAction action = new TransportMultiSearchAction(threadPool, actionFilters, transportService, clusterService,
+                searchAction, resolver, 10, usageService);
 
         // Execute the multi search api and fail if we find an error after executing:
         try {

@@ -35,6 +35,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  *
@@ -44,9 +45,11 @@ public class TransportUpdateSettingsAction extends TransportMasterNodeAction<Upd
     private final MetaDataUpdateSettingsService updateSettingsService;
 
     @Inject
-    public TransportUpdateSettingsAction(Settings settings, TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-                                         MetaDataUpdateSettingsService updateSettingsService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, UpdateSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, UpdateSettingsRequest::new);
+    public TransportUpdateSettingsAction(Settings settings, TransportService transportService, ClusterService clusterService,
+            ThreadPool threadPool, MetaDataUpdateSettingsService updateSettingsService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, UpdateSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                UpdateSettingsRequest::new, usageService);
         this.updateSettingsService = updateSettingsService;
     }
 

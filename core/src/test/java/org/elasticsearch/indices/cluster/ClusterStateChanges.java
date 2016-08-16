@@ -65,16 +65,19 @@ import org.elasticsearch.common.component.AbstractComponent;
 import org.elasticsearch.common.settings.ClusterSettings;
 import org.elasticsearch.common.settings.IndexScopedSettings;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.IndexService;
 import org.elasticsearch.index.NodeServicesProvider;
 import org.elasticsearch.index.mapper.MapperService;
 import org.elasticsearch.index.shard.IndexEventListener;
 import org.elasticsearch.indices.IndicesService;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.gateway.NoopGatewayAllocator;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.Transport;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -168,18 +171,23 @@ public class ClusterStateChanges extends AbstractComponent {
             allocationService, new AliasValidator(settings), Collections.emptySet(), environment,
             nodeServicesProvider, IndexScopedSettings.DEFAULT_SCOPED_SETTINGS, threadPool);
 
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, settings);
         transportCloseIndexAction = new TransportCloseIndexAction(settings, transportService, clusterService, threadPool,
-            indexStateService, clusterSettings, actionFilters, indexNameExpressionResolver, destructiveOperations);
+                indexStateService, clusterSettings, actionFilters, indexNameExpressionResolver, destructiveOperations, usageService);
         transportOpenIndexAction = new TransportOpenIndexAction(settings, transportService,
-            clusterService, threadPool, indexStateService, actionFilters, indexNameExpressionResolver, destructiveOperations);
+                clusterService, threadPool, indexStateService, actionFilters, indexNameExpressionResolver, destructiveOperations,
+                usageService);
         transportDeleteIndexAction = new TransportDeleteIndexAction(settings, transportService,
-            clusterService, threadPool, deleteIndexService, actionFilters, indexNameExpressionResolver, destructiveOperations);
+                clusterService, threadPool, deleteIndexService, actionFilters, indexNameExpressionResolver, destructiveOperations,
+                usageService);
         transportUpdateSettingsAction = new TransportUpdateSettingsAction(settings,
-            transportService, clusterService, threadPool, metaDataUpdateSettingsService, actionFilters, indexNameExpressionResolver);
+                transportService, clusterService, threadPool, metaDataUpdateSettingsService, actionFilters, indexNameExpressionResolver,
+                usageService);
         transportClusterRerouteAction = new TransportClusterRerouteAction(settings,
-            transportService, clusterService, threadPool, allocationService, actionFilters, indexNameExpressionResolver);
+                transportService, clusterService, threadPool, allocationService, actionFilters, indexNameExpressionResolver, usageService);
         transportCreateIndexAction = new TransportCreateIndexAction(settings,
-            transportService, clusterService, threadPool, createIndexService, actionFilters, indexNameExpressionResolver);
+                transportService, clusterService, threadPool, createIndexService, actionFilters, indexNameExpressionResolver, usageService);
     }
 
     public ClusterState createIndex(ClusterState state, CreateIndexRequest request) {

@@ -52,6 +52,7 @@ import org.elasticsearch.search.aggregations.InternalAggregations;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,9 +68,10 @@ public class TransportPercolateAction extends HandledTransportAction<PercolateRe
 
     @Inject
     public TransportPercolateAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                    ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                    Client client, IndicesQueriesRegistry indicesQueriesRegistry, AggregatorParsers aggParsers) {
-        super(settings, PercolateAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, PercolateRequest::new);
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Client client,
+            IndicesQueriesRegistry indicesQueriesRegistry, AggregatorParsers aggParsers, UsageService usageService) {
+        super(settings, PercolateAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                PercolateRequest::new, usageService);
         this.client = client;
         this.aggParsers = aggParsers;
         this.parseFieldMatcher = new ParseFieldMatcher(settings);

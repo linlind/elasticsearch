@@ -48,6 +48,7 @@ import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 
@@ -70,8 +71,10 @@ public class TransportGetTaskAction extends HandledTransportAction<GetTaskReques
 
     @Inject
     public TransportGetTaskAction(Settings settings, ThreadPool threadPool, TransportService transportService, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver, ClusterService clusterService, Client client) {
-        super(settings, GetTaskAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, GetTaskRequest::new);
+            IndexNameExpressionResolver indexNameExpressionResolver, ClusterService clusterService, Client client,
+            UsageService usageService) {
+        super(settings, GetTaskAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, GetTaskRequest::new,
+                usageService);
         this.clusterService = clusterService;
         this.transportService = transportService;
         this.client = client;

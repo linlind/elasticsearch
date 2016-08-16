@@ -45,6 +45,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Performs the delete operation.
@@ -59,9 +60,9 @@ public class TransportDeleteAction extends TransportWriteAction<DeleteRequest, D
                                  IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
                                  TransportCreateIndexAction createIndexAction, ActionFilters actionFilters,
                                  IndexNameExpressionResolver indexNameExpressionResolver,
-                                 AutoCreateIndex autoCreateIndex) {
+                                 AutoCreateIndex autoCreateIndex, UsageService usageService) {
         super(settings, DeleteAction.NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
-                indexNameExpressionResolver, DeleteRequest::new, ThreadPool.Names.INDEX);
+                indexNameExpressionResolver, DeleteRequest::new, ThreadPool.Names.INDEX, usageService);
         this.createIndexAction = createIndexAction;
         this.autoCreateIndex = autoCreateIndex;
     }

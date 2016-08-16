@@ -32,6 +32,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.service.NodeService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,12 +48,11 @@ public class TransportNodesInfoAction extends TransportNodesAction<NodesInfoRequ
     private final NodeService nodeService;
 
     @Inject
-    public TransportNodesInfoAction(Settings settings, ThreadPool threadPool,
-                                    ClusterService clusterService, TransportService transportService,
-                                    NodeService nodeService, ActionFilters actionFilters,
-                                    IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, NodesInfoAction.NAME, threadPool, clusterService, transportService, actionFilters,
-              indexNameExpressionResolver, NodesInfoRequest::new, NodeInfoRequest::new, ThreadPool.Names.MANAGEMENT, NodeInfo.class);
+    public TransportNodesInfoAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, NodeService nodeService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, NodesInfoAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                NodesInfoRequest::new, NodeInfoRequest::new, ThreadPool.Names.MANAGEMENT, NodeInfo.class, usageService);
         this.nodeService = nodeService;
     }
 

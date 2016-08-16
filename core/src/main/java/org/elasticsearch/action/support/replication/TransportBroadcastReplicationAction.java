@@ -41,6 +41,7 @@ import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,10 +59,11 @@ public abstract class TransportBroadcastReplicationAction<Request extends Broadc
     private final TransportReplicationAction replicatedBroadcastShardAction;
     private final ClusterService clusterService;
 
-    public TransportBroadcastReplicationAction(String name, Supplier<Request> request, Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                               TransportService transportService,
-                                               ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, TransportReplicationAction replicatedBroadcastShardAction) {
-        super(settings, name, threadPool, transportService, actionFilters, indexNameExpressionResolver, request);
+    public TransportBroadcastReplicationAction(String name, Supplier<Request> request, Settings settings, ThreadPool threadPool,
+            ClusterService clusterService, TransportService transportService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, TransportReplicationAction replicatedBroadcastShardAction,
+            UsageService usageService) {
+        super(settings, name, threadPool, transportService, actionFilters, indexNameExpressionResolver, request, usageService);
         this.replicatedBroadcastShardAction = replicatedBroadcastShardAction;
         this.clusterService = clusterService;
     }

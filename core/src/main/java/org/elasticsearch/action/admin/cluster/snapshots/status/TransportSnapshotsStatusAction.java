@@ -43,6 +43,7 @@ import org.elasticsearch.snapshots.SnapshotMissingException;
 import org.elasticsearch.snapshots.SnapshotsService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,10 +67,10 @@ public class TransportSnapshotsStatusAction extends TransportMasterNodeAction<Sn
 
     @Inject
     public TransportSnapshotsStatusAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                          ThreadPool threadPool, SnapshotsService snapshotsService,
-                                          TransportNodesSnapshotsStatus transportNodesSnapshotsStatus,
-                                          ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, SnapshotsStatusAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, SnapshotsStatusRequest::new);
+            ThreadPool threadPool, SnapshotsService snapshotsService, TransportNodesSnapshotsStatus transportNodesSnapshotsStatus,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, SnapshotsStatusAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, SnapshotsStatusRequest::new, usageService);
         this.snapshotsService = snapshotsService;
         this.transportNodesSnapshotsStatus = transportNodesSnapshotsStatus;
     }

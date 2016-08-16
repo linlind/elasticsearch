@@ -45,11 +45,13 @@ import org.elasticsearch.discovery.MasterNotDiscoveredException;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.ConnectTransportException;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -76,6 +78,8 @@ public class TransportMasterNodeActionTests extends ESTestCase {
     private DiscoveryNode remoteNode;
     private DiscoveryNode[] allNodes;
 
+    private UsageService usageService;
+
     @BeforeClass
     public static void beforeClass() {
         threadPool = new TestThreadPool("TransportMasterNodeActionTests");
@@ -95,13 +99,17 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         remoteNode = new DiscoveryNode("remote_node", LocalTransportAddress.buildUnique(), Collections.emptyMap(),
                 Collections.singleton(DiscoveryNode.Role.MASTER), Version.CURRENT);
         allNodes = new DiscoveryNode[]{localNode, remoteNode};
+        Discovery discovery = new NoopDiscovery();
+        usageService = new UsageService(discovery, clusterService.getSettings());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         clusterService.close();
         transportService.close();
+        usageService.close();
     }
 
     @AfterClass
@@ -129,9 +137,10 @@ public class TransportMasterNodeActionTests extends ESTestCase {
     class Response extends ActionResponse {}
 
     class Action extends TransportMasterNodeAction<Request, Response> {
-        Action(Settings settings, String actionName, TransportService transportService, ClusterService clusterService, ThreadPool threadPool) {
-            super(settings, actionName, transportService, clusterService, threadPool,
-                    new ActionFilters(new HashSet<>()), new IndexNameExpressionResolver(Settings.EMPTY), Request::new);
+        Action(Settings settings, String actionName, TransportService transportService, ClusterService clusterService,
+                ThreadPool threadPool, UsageService usageService) {
+            super(settings, actionName, transportService, clusterService, threadPool, new ActionFilters(new HashSet<>()),
+                    new IndexNameExpressionResolver(Settings.EMPTY), Request::new, usageService);
         }
 
         @Override
@@ -173,7 +182,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
 
         setState(clusterService, ClusterStateCreationUtils.state(localNode, localNode, allNodes));
 
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool) {
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService) {
             @Override
             protected void masterOperation(Task task, Request request, ClusterState state, ActionListener<Response> listener) throws Exception {
                 if (masterOperationFailure) {
@@ -210,7 +219,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
                 .blocks(ClusterBlocks.builder().addGlobalBlock(block)).build();
         setState(clusterService, stateWithBlock);
 
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool) {
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService) {
             @Override
             protected ClusterBlockException checkBlock(Request request, ClusterState state) {
                 Set<ClusterBlock> blocks = state.blocks().global();
@@ -247,7 +256,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
 
         setState(clusterService, ClusterStateCreationUtils.state(localNode, randomFrom(localNode, remoteNode, null), allNodes));
 
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool) {
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService) {
             @Override
             protected boolean localExecute(Request request) {
                 return true;
@@ -262,7 +271,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         Request request = new Request().masterNodeTimeout(TimeValue.timeValueSeconds(0));
         setState(clusterService, ClusterStateCreationUtils.state(localNode, null, allNodes));
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool).execute(request, listener);
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService).execute(request, listener);
         assertTrue(listener.isDone());
         assertListenerThrows("MasterNotDiscoveredException should be thrown", listener, MasterNotDiscoveredException.class);
     }
@@ -271,7 +280,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         Request request = new Request();
         setState(clusterService, ClusterStateCreationUtils.state(localNode, null, allNodes));
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool).execute(request, listener);
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService).execute(request, listener);
         assertFalse(listener.isDone());
         setState(clusterService, ClusterStateCreationUtils.state(localNode, localNode, allNodes));
         assertTrue(listener.isDone());
@@ -283,7 +292,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         setState(clusterService, ClusterStateCreationUtils.state(localNode, remoteNode, allNodes));
 
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool).execute(request, listener);
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService).execute(request, listener);
 
         assertThat(transport.capturedRequests().length, equalTo(1));
         CapturingTransport.CapturedRequest capturedRequest = transport.capturedRequests()[0];
@@ -303,7 +312,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
         setState(clusterService, ClusterStateCreationUtils.state(localNode, remoteNode, allNodes));
 
         PlainActionFuture<Response> listener = new PlainActionFuture<>();
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool).execute(request, listener);
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService).execute(request, listener);
 
         assertThat(transport.capturedRequests().length, equalTo(1));
         CapturingTransport.CapturedRequest capturedRequest = transport.capturedRequests()[0];
@@ -343,7 +352,7 @@ public class TransportMasterNodeActionTests extends ESTestCase {
 
         setState(clusterService, ClusterStateCreationUtils.state(localNode, localNode, allNodes));
 
-        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool) {
+        new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService) {
             @Override
             protected void masterOperation(Request request, ClusterState state, ActionListener<Response> listener) throws Exception {
                 // The other node has become master, simulate failures of this node while publishing cluster state through ZenDiscovery

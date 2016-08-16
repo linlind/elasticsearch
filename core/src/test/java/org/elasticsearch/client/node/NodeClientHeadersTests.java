@@ -28,9 +28,11 @@ import org.elasticsearch.action.support.TransportAction;
 import org.elasticsearch.client.AbstractClientHeadersTestCase;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.tasks.Task;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.tasks.TaskManager;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,16 +56,18 @@ public class NodeClientHeadersTests extends AbstractClientHeadersTestCase {
     private static class Actions extends HashMap<GenericAction, TransportAction> {
 
         private Actions(Settings settings, ThreadPool threadPool, GenericAction[] actions) {
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, Settings.EMPTY);
             for (GenericAction action : actions) {
-                put(action, new InternalTransportAction(settings, action.name(), threadPool));
+                put(action, new InternalTransportAction(settings, action.name(), threadPool, usageService));
             }
         }
     }
 
     private static class InternalTransportAction extends TransportAction {
 
-        private InternalTransportAction(Settings settings, String actionName, ThreadPool threadPool) {
-            super(settings, actionName, threadPool, EMPTY_FILTERS, null, new TaskManager(settings));
+        private InternalTransportAction(Settings settings, String actionName, ThreadPool threadPool, UsageService usageService) {
+            super(settings, actionName, threadPool, EMPTY_FILTERS, null, new TaskManager(settings), usageService);
         }
 
         @Override

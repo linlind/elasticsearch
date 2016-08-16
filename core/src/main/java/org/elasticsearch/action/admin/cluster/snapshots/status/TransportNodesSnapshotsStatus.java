@@ -41,6 +41,7 @@ import org.elasticsearch.index.snapshots.IndexShardSnapshotStatus;
 import org.elasticsearch.snapshots.SnapshotShardsService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -63,12 +64,11 @@ public class TransportNodesSnapshotsStatus extends TransportNodesAction<Transpor
     private final SnapshotShardsService snapshotShardsService;
 
     @Inject
-    public TransportNodesSnapshotsStatus(Settings settings, ThreadPool threadPool,
-                                         ClusterService clusterService, TransportService transportService,
-                                         SnapshotShardsService snapshotShardsService, ActionFilters actionFilters,
-                                         IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-              Request::new, NodeRequest::new, ThreadPool.Names.GENERIC, NodeSnapshotStatus.class);
+    public TransportNodesSnapshotsStatus(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, SnapshotShardsService snapshotShardsService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, Request::new,
+                NodeRequest::new, ThreadPool.Names.GENERIC, NodeSnapshotStatus.class, usageService);
         this.snapshotShardsService = snapshotShardsService;
     }
 

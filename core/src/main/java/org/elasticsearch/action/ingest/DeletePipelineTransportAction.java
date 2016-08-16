@@ -33,6 +33,7 @@ import org.elasticsearch.ingest.PipelineStore;
 import org.elasticsearch.node.service.NodeService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 public class DeletePipelineTransportAction extends TransportMasterNodeAction<DeletePipelineRequest, WritePipelineResponse> {
 
@@ -41,9 +42,10 @@ public class DeletePipelineTransportAction extends TransportMasterNodeAction<Del
 
     @Inject
     public DeletePipelineTransportAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                         TransportService transportService, ActionFilters actionFilters,
-                                         IndexNameExpressionResolver indexNameExpressionResolver, NodeService nodeService) {
-        super(settings, DeletePipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, DeletePipelineRequest::new);
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            NodeService nodeService, UsageService usageService) {
+        super(settings, DeletePipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                DeletePipelineRequest::new, usageService);
         this.clusterService = clusterService;
         this.pipelineStore = nodeService.getIngestService().getPipelineStore();
     }

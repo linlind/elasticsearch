@@ -38,6 +38,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.indices.recovery.RecoveryState;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,10 +56,10 @@ public class TransportRecoveryAction extends TransportBroadcastByNodeAction<Reco
 
     @Inject
     public TransportRecoveryAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                   TransportService transportService, IndicesService indicesService,
-                                   ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, RecoveryAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                RecoveryRequest::new, ThreadPool.Names.MANAGEMENT);
+                RecoveryRequest::new, ThreadPool.Names.MANAGEMENT, usageService);
         this.indicesService = indicesService;
     }
 

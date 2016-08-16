@@ -33,10 +33,10 @@ import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.Index;
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -48,8 +48,10 @@ public class TransportClusterSearchShardsAction extends TransportMasterNodeReadA
 
     @Inject
     public TransportClusterSearchShardsAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                              ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ClusterSearchShardsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, ClusterSearchShardsRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, ClusterSearchShardsAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, ClusterSearchShardsRequest::new, usageService);
     }
 
     @Override

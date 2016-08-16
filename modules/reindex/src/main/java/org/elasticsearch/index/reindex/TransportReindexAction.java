@@ -63,6 +63,7 @@ import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -93,9 +94,10 @@ public class TransportReindexAction extends HandledTransportAction<ReindexReques
     @Inject
     public TransportReindexAction(Settings settings, ThreadPool threadPool, ActionFilters actionFilters,
             IndexNameExpressionResolver indexNameExpressionResolver, ClusterService clusterService, ScriptService scriptService,
-            AutoCreateIndex autoCreateIndex, Client client, TransportService transportService, @Nullable HttpServer httpServer) {
-        super(settings, ReindexAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
-                ReindexRequest::new);
+            AutoCreateIndex autoCreateIndex, Client client, TransportService transportService, @Nullable HttpServer httpServer,
+            UsageService usageService) {
+        super(settings, ReindexAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, ReindexRequest::new,
+                usageService);
         this.clusterService = clusterService;
         this.scriptService = scriptService;
         this.autoCreateIndex = autoCreateIndex;

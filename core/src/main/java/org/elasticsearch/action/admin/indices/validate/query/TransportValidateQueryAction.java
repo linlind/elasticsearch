@@ -54,6 +54,7 @@ import org.elasticsearch.search.internal.ShardSearchLocalRequest;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,9 +80,10 @@ public class TransportValidateQueryAction extends TransportBroadcastAction<Valid
     public TransportValidateQueryAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
             TransportService transportService, IndicesService indicesService, ScriptService scriptService,
             BigArrays bigArrays, ActionFilters actionFilters,
-            IndexNameExpressionResolver indexNameExpressionResolver, FetchPhase fetchPhase) {
+            IndexNameExpressionResolver indexNameExpressionResolver, FetchPhase fetchPhase, UsageService usageService) {
         super(settings, ValidateQueryAction.NAME, threadPool, clusterService, transportService, actionFilters,
-                indexNameExpressionResolver, ValidateQueryRequest::new, ShardValidateQueryRequest::new, ThreadPool.Names.SEARCH);
+                indexNameExpressionResolver, ValidateQueryRequest::new, ShardValidateQueryRequest::new, ThreadPool.Names.SEARCH,
+                usageService);
         this.indicesService = indicesService;
         this.scriptService = scriptService;
         this.bigArrays = bigArrays;

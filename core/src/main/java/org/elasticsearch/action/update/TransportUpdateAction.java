@@ -58,6 +58,7 @@ import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Collections;
 import java.util.Map;
@@ -77,10 +78,11 @@ public class TransportUpdateAction extends TransportInstanceSingleOperationActio
 
     @Inject
     public TransportUpdateAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-                                 TransportIndexAction indexAction, TransportDeleteAction deleteAction, TransportCreateIndexAction createIndexAction,
-                                 UpdateHelper updateHelper, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                 IndicesService indicesService, AutoCreateIndex autoCreateIndex) {
-        super(settings, UpdateAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, UpdateRequest::new);
+            TransportIndexAction indexAction, TransportDeleteAction deleteAction, TransportCreateIndexAction createIndexAction,
+            UpdateHelper updateHelper, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            IndicesService indicesService, AutoCreateIndex autoCreateIndex, UsageService usageService) {
+        super(settings, UpdateAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                UpdateRequest::new, usageService);
         this.indexAction = indexAction;
         this.deleteAction = deleteAction;
         this.createIndexAction = createIndexAction;

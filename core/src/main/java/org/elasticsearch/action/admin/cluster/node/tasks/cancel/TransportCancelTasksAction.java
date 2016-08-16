@@ -43,6 +43,7 @@ import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,13 +64,13 @@ public class TransportCancelTasksAction extends TransportTasksAction<Cancellable
 
     @Inject
     public TransportCancelTasksAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                      TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver
-                                          indexNameExpressionResolver) {
-        super(settings, CancelTasksAction.NAME, threadPool, clusterService, transportService, actionFilters,
-            indexNameExpressionResolver, CancelTasksRequest::new, () -> new CancelTasksResponse(clusterService.state().nodes()),
-            ThreadPool.Names.MANAGEMENT);
-        transportService.registerRequestHandler(BAN_PARENT_ACTION_NAME, BanParentTaskRequest::new, ThreadPool.Names.SAME, new
-            BanParentRequestHandler());
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, CancelTasksAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                CancelTasksRequest::new, () -> new CancelTasksResponse(clusterService.state().nodes()), ThreadPool.Names.MANAGEMENT,
+                usageService);
+        transportService.registerRequestHandler(BAN_PARENT_ACTION_NAME, BanParentTaskRequest::new, ThreadPool.Names.SAME,
+                new BanParentRequestHandler());
     }
 
     @Override
@@ -83,6 +84,7 @@ public class TransportCancelTasksAction extends TransportTasksAction<Cancellable
         return new TaskInfo(in);
     }
 
+    @Override
     protected void processTasks(CancelTasksRequest request, Consumer<CancellableTask> operation) {
         if (request.getTaskId().isSet()) {
             // we are only checking one task, we can optimize it

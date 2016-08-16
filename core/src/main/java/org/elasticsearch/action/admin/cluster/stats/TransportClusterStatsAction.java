@@ -42,6 +42,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.node.service.NodeService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,13 +62,12 @@ public class TransportClusterStatsAction extends TransportNodesAction<ClusterSta
 
 
     @Inject
-    public TransportClusterStatsAction(Settings settings, ThreadPool threadPool,
-                                       ClusterService clusterService, TransportService transportService,
-                                       NodeService nodeService, IndicesService indicesService,
-                                       ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ClusterStatsAction.NAME, threadPool, clusterService, transportService, actionFilters,
-              indexNameExpressionResolver, ClusterStatsRequest::new, ClusterStatsNodeRequest::new, ThreadPool.Names.MANAGEMENT,
-              ClusterStatsNodeResponse.class);
+    public TransportClusterStatsAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, NodeService nodeService, IndicesService indicesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, ClusterStatsAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                ClusterStatsRequest::new, ClusterStatsNodeRequest::new, ThreadPool.Names.MANAGEMENT, ClusterStatsNodeResponse.class,
+                usageService);
         this.nodeService = nodeService;
         this.indicesService = indicesService;
     }

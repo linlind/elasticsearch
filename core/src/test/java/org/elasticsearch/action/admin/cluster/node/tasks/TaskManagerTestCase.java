@@ -45,14 +45,17 @@ import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.lease.Releasable;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.indices.breaker.NoneCircuitBreakerService;
 import org.elasticsearch.tasks.TaskManager;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.tasks.MockTaskManager;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
 import org.elasticsearch.transport.local.LocalTransport;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -137,12 +140,12 @@ public abstract class TaskManagerTestCase extends ESTestCase {
     abstract class AbstractTestNodesAction<NodesRequest extends BaseNodesRequest<NodesRequest>, NodeRequest extends BaseNodeRequest>
             extends TransportNodesAction<NodesRequest, NodesResponse, NodeRequest, NodeResponse> {
 
-        AbstractTestNodesAction(Settings settings, String actionName, ThreadPool threadPool,
-                                ClusterService clusterService, TransportService transportService, Supplier<NodesRequest> request,
-                                Supplier<NodeRequest> nodeRequest) {
-            super(settings, actionName, threadPool, clusterService, transportService,
-                    new ActionFilters(new HashSet<>()), new IndexNameExpressionResolver(Settings.EMPTY),
-                    request, nodeRequest, ThreadPool.Names.GENERIC, NodeResponse.class);
+        AbstractTestNodesAction(Settings settings, String actionName, ThreadPool threadPool, ClusterService clusterService,
+                TransportService transportService, Supplier<NodesRequest> request, Supplier<NodeRequest> nodeRequest,
+                UsageService usageService) {
+            super(settings, actionName, threadPool, clusterService, transportService, new ActionFilters(new HashSet<>()),
+                    new IndexNameExpressionResolver(Settings.EMPTY), request, nodeRequest, ThreadPool.Names.GENERIC, NodeResponse.class,
+                    usageService);
         }
 
         @Override
@@ -185,10 +188,12 @@ public abstract class TaskManagerTestCase extends ESTestCase {
                     emptyMap(), emptySet(), Version.CURRENT);
             IndexNameExpressionResolver indexNameExpressionResolver = new IndexNameExpressionResolver(settings);
             ActionFilters actionFilters = new ActionFilters(emptySet());
+            Discovery discovery = new NoopDiscovery();
+            UsageService usageService = new UsageService(discovery, clusterService.getSettings());
             transportListTasksAction = new TransportListTasksAction(settings, threadPool, clusterService, transportService,
-                    actionFilters, indexNameExpressionResolver);
+                    actionFilters, indexNameExpressionResolver, usageService);
             transportCancelTasksAction = new TransportCancelTasksAction(settings, threadPool, clusterService,
-                    transportService, actionFilters, indexNameExpressionResolver);
+                    transportService, actionFilters, indexNameExpressionResolver, usageService);
             transportService.acceptIncomingRequests();
         }
 

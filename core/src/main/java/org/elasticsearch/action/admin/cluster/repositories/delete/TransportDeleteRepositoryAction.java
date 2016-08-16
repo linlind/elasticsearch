@@ -33,6 +33,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.repositories.RepositoriesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Transport action for unregister repository operation
@@ -44,8 +45,9 @@ public class TransportDeleteRepositoryAction extends TransportMasterNodeAction<D
     @Inject
     public TransportDeleteRepositoryAction(Settings settings, TransportService transportService, ClusterService clusterService,
                                            RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
-                                           IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, DeleteRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, DeleteRepositoryRequest::new);
+                                           IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, DeleteRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, DeleteRepositoryRequest::new, usageService);
         this.repositoriesService = repositoriesService;
     }
 

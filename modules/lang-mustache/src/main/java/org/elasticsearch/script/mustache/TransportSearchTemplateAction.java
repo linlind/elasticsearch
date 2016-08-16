@@ -41,6 +41,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.suggest.Suggesters;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import static java.util.Collections.emptyMap;
 import static org.elasticsearch.script.ScriptContext.Standard.SEARCH;
@@ -57,11 +58,11 @@ public class TransportSearchTemplateAction extends HandledTransportAction<Search
 
     @Inject
     public TransportSearchTemplateAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                         ActionFilters actionFilters, IndexNameExpressionResolver resolver,
-                                         ScriptService scriptService,
-                                         TransportSearchAction searchAction, IndicesQueriesRegistry indicesQueryRegistry,
-                                         AggregatorParsers aggregatorParsers, Suggesters suggesters) {
-        super(settings, SearchTemplateAction.NAME, threadPool, transportService, actionFilters, resolver, SearchTemplateRequest::new);
+            ActionFilters actionFilters, IndexNameExpressionResolver resolver, ScriptService scriptService,
+            TransportSearchAction searchAction, IndicesQueriesRegistry indicesQueryRegistry, AggregatorParsers aggregatorParsers,
+            Suggesters suggesters, UsageService usageService) {
+        super(settings, SearchTemplateAction.NAME, threadPool, transportService, actionFilters, resolver, SearchTemplateRequest::new,
+                usageService);
         this.scriptService = scriptService;
         this.searchAction = searchAction;
         this.queryRegistry = indicesQueryRegistry;

@@ -40,6 +40,7 @@ import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  *
@@ -50,10 +51,10 @@ public class TransportClusterHealthAction extends TransportMasterNodeReadAction<
 
     @Inject
     public TransportClusterHealthAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                        ThreadPool threadPool, ActionFilters actionFilters,
-                                        IndexNameExpressionResolver indexNameExpressionResolver, GatewayAllocator gatewayAllocator) {
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            GatewayAllocator gatewayAllocator, UsageService usageService) {
         super(settings, ClusterHealthAction.NAME, false, transportService, clusterService, threadPool, actionFilters,
-            indexNameExpressionResolver, ClusterHealthRequest::new);
+                indexNameExpressionResolver, ClusterHealthRequest::new, usageService);
         this.gatewayAllocator = gatewayAllocator;
     }
 

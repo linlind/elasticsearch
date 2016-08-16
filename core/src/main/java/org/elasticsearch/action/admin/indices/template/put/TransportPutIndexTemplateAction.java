@@ -33,6 +33,7 @@ import org.elasticsearch.common.settings.IndexScopedSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Put index template action.
@@ -44,9 +45,10 @@ public class TransportPutIndexTemplateAction extends TransportMasterNodeAction<P
 
     @Inject
     public TransportPutIndexTemplateAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                           ThreadPool threadPool, MetaDataIndexTemplateService indexTemplateService,
-                                           ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, IndexScopedSettings indexScopedSettings) {
-        super(settings, PutIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, PutIndexTemplateRequest::new);
+            ThreadPool threadPool, MetaDataIndexTemplateService indexTemplateService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, IndexScopedSettings indexScopedSettings, UsageService usageService) {
+        super(settings, PutIndexTemplateAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, PutIndexTemplateRequest::new, usageService);
         this.indexTemplateService = indexTemplateService;
         this.indexScopedSettings = indexScopedSettings;
     }

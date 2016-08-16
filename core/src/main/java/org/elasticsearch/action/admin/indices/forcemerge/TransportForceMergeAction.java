@@ -36,6 +36,7 @@ import org.elasticsearch.index.shard.IndexShard;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,10 +50,10 @@ public class TransportForceMergeAction extends TransportBroadcastByNodeAction<Fo
 
     @Inject
     public TransportForceMergeAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                   TransportService transportService, IndicesService indicesService,
-                                   ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, ForceMergeAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                ForceMergeRequest::new, ThreadPool.Names.FORCE_MERGE);
+                ForceMergeRequest::new, ThreadPool.Names.FORCE_MERGE, usageService);
         this.indicesService = indicesService;
     }
 

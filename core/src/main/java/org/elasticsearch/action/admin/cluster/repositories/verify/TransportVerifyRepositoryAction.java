@@ -33,6 +33,7 @@ import org.elasticsearch.repositories.RepositoriesService;
 import org.elasticsearch.repositories.RepositoryVerificationException;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Transport action for verifying repository operation
@@ -44,9 +45,10 @@ public class TransportVerifyRepositoryAction extends TransportMasterNodeAction<V
 
     @Inject
     public TransportVerifyRepositoryAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                           RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
-                                           IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, VerifyRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, VerifyRepositoryRequest::new);
+            RepositoriesService repositoriesService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, VerifyRepositoryAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, VerifyRepositoryRequest::new, usageService);
         this.repositoriesService = repositoriesService;
     }
 

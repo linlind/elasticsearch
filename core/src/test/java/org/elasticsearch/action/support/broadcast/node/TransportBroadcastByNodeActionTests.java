@@ -50,10 +50,12 @@ import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.LocalTransportAddress;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
@@ -61,6 +63,7 @@ import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseOptions;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -117,8 +120,11 @@ public class TransportBroadcastByNodeActionTests extends ESTestCase {
     class TestTransportBroadcastByNodeAction extends TransportBroadcastByNodeAction<Request, Response, TransportBroadcastByNodeAction.EmptyResult> {
         private final Map<ShardRouting, Object> shards = new HashMap<>();
 
-        public TestTransportBroadcastByNodeAction(Settings settings, TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, String executor) {
-            super(settings, "indices:admin/test", THREAD_POOL, TransportBroadcastByNodeActionTests.this.clusterService, transportService, actionFilters, indexNameExpressionResolver, request, executor);
+        public TestTransportBroadcastByNodeAction(Settings settings, TransportService transportService, ActionFilters actionFilters,
+                IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, String executor,
+                UsageService usageService) {
+            super(settings, "indices:admin/test", THREAD_POOL, TransportBroadcastByNodeActionTests.this.clusterService, transportService,
+                    actionFilters, indexNameExpressionResolver, request, executor, usageService);
         }
 
         @Override
@@ -186,6 +192,7 @@ public class TransportBroadcastByNodeActionTests extends ESTestCase {
         THREAD_POOL = new TestThreadPool(TransportBroadcastByNodeActionTests.class.getSimpleName());
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -195,16 +202,13 @@ public class TransportBroadcastByNodeActionTests extends ESTestCase {
         transportService.start();
         transportService.acceptIncomingRequests();
         setClusterState(clusterService, TEST_INDEX);
-        action = new TestTransportBroadcastByNodeAction(
-                Settings.EMPTY,
-                transportService,
-                new ActionFilters(new HashSet<>()),
-                new MyResolver(),
-                Request::new,
-                ThreadPool.Names.SAME
-        );
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
+        action = new TestTransportBroadcastByNodeAction(Settings.EMPTY, transportService, new ActionFilters(new HashSet<>()),
+                new MyResolver(), Request::new, ThreadPool.Names.SAME, usageService);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

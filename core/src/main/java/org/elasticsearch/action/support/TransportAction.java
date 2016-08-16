@@ -33,6 +33,7 @@ import org.elasticsearch.tasks.Task;
 import org.elasticsearch.tasks.TaskListener;
 import org.elasticsearch.tasks.TaskManager;
 import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -49,12 +50,14 @@ public abstract class TransportAction<Request extends ActionRequest<Request>, Re
     protected final ParseFieldMatcher parseFieldMatcher;
     protected final IndexNameExpressionResolver indexNameExpressionResolver;
     protected final TaskManager taskManager;
+    private UsageService usageService;
 
     protected TransportAction(Settings settings, String actionName, ThreadPool threadPool, ActionFilters actionFilters,
-                              IndexNameExpressionResolver indexNameExpressionResolver, TaskManager taskManager) {
+            IndexNameExpressionResolver indexNameExpressionResolver, TaskManager taskManager, UsageService usageService) {
         super(settings);
         this.threadPool = threadPool;
         this.actionName = actionName;
+        this.usageService = usageService;
         this.filters = actionFilters.filters();
         this.parseFieldMatcher = new ParseFieldMatcher(settings);
         this.indexNameExpressionResolver = indexNameExpressionResolver;
@@ -141,6 +144,7 @@ public abstract class TransportAction<Request extends ActionRequest<Request>, Re
             listener = new PersistentActionListener<>(taskManager, task, listener);
         }
 
+        usageService.addActionCall(actionName);
         if (filters.length == 0) {
             try {
                 doExecute(task, request, listener);

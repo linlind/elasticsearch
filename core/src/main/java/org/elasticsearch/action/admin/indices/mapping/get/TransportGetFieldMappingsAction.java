@@ -29,6 +29,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +47,10 @@ public class TransportGetFieldMappingsAction extends HandledTransportAction<GetF
 
     @Inject
     public TransportGetFieldMappingsAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                           ThreadPool threadPool, TransportGetFieldMappingsIndexAction shardAction,
-                                           ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, GetFieldMappingsAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, GetFieldMappingsRequest::new);
+            ThreadPool threadPool, TransportGetFieldMappingsIndexAction shardAction, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, GetFieldMappingsAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                GetFieldMappingsRequest::new, usageService);
         this.clusterService = clusterService;
         this.shardAction = shardAction;
     }

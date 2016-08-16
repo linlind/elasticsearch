@@ -41,6 +41,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -58,11 +59,11 @@ public class TransportNodesListGatewayMetaState extends TransportNodesAction<Tra
     private GatewayMetaState metaState;
 
     @Inject
-    public TransportNodesListGatewayMetaState(Settings settings, ThreadPool threadPool,
-                                              ClusterService clusterService, TransportService transportService,
-                                              ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters,
-              indexNameExpressionResolver, Request::new, NodeRequest::new, ThreadPool.Names.GENERIC, NodeGatewayMetaState.class);
+    public TransportNodesListGatewayMetaState(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, Request::new,
+                NodeRequest::new, ThreadPool.Names.GENERIC, NodeGatewayMetaState.class, usageService);
     }
 
     TransportNodesListGatewayMetaState init(GatewayMetaState metaState) {

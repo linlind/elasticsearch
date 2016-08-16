@@ -37,6 +37,7 @@ import org.elasticsearch.common.util.CollectionUtils;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Map;
 
@@ -48,9 +49,10 @@ public class TransportGetSettingsAction extends TransportMasterNodeReadAction<Ge
 
     @Inject
     public TransportGetSettingsAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                      ThreadPool threadPool, SettingsFilter settingsFilter, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, GetSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, GetSettingsRequest::new);
+            ThreadPool threadPool, SettingsFilter settingsFilter, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, GetSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                GetSettingsRequest::new, usageService);
         this.settingsFilter = settingsFilter;
     }
 

@@ -34,6 +34,7 @@ import org.elasticsearch.search.action.SearchTransportService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +52,10 @@ public class TransportClearScrollAction extends HandledTransportAction<ClearScro
 
     @Inject
     public TransportClearScrollAction(Settings settings, TransportService transportService, ThreadPool threadPool,
-                                      ClusterService clusterService, SearchTransportService searchTransportService,
-                                      ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ClearScrollAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, ClearScrollRequest::new);
+            ClusterService clusterService, SearchTransportService searchTransportService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, ClearScrollAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                ClearScrollRequest::new, usageService);
         this.clusterService = clusterService;
         this.searchTransportService = searchTransportService;
     }

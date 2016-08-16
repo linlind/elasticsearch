@@ -47,6 +47,7 @@ import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,12 +74,12 @@ public abstract class TransportTasksAction<
 
     protected final String transportNodeAction;
 
-    protected TransportTasksAction(Settings settings, String actionName, ThreadPool threadPool,
-                                   ClusterService clusterService, TransportService transportService, ActionFilters actionFilters,
-                                   IndexNameExpressionResolver indexNameExpressionResolver, Supplier<TasksRequest> requestSupplier,
-                                   Supplier<TasksResponse> responseSupplier,
-                                   String nodeExecutor) {
-        super(settings, actionName, threadPool, transportService, actionFilters, indexNameExpressionResolver, requestSupplier);
+    protected TransportTasksAction(Settings settings, String actionName, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            Supplier<TasksRequest> requestSupplier, Supplier<TasksResponse> responseSupplier, String nodeExecutor,
+            UsageService usageService) {
+        super(settings, actionName, threadPool, transportService, actionFilters, indexNameExpressionResolver, requestSupplier,
+                usageService);
         this.clusterService = clusterService;
         this.transportService = transportService;
         this.transportNodeAction = actionName + "[n]";

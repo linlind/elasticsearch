@@ -41,6 +41,7 @@ import org.elasticsearch.indices.query.IndicesQueriesRegistry;
 import org.elasticsearch.search.aggregations.AggregatorParsers;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,10 +59,11 @@ public class TransportMultiPercolateAction extends HandledTransportAction<MultiP
     private final AggregatorParsers aggParsers;
 
     @Inject
-    public TransportMultiPercolateAction(Settings settings, ThreadPool threadPool, TransportService transportService, ActionFilters actionFilters,
-                                         IndexNameExpressionResolver indexNameExpressionResolver, Client client, IndicesQueriesRegistry queryRegistry,
-                                         AggregatorParsers aggParsers) {
-        super(settings, MultiPercolateAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, MultiPercolateRequest::new);
+    public TransportMultiPercolateAction(Settings settings, ThreadPool threadPool, TransportService transportService,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Client client,
+            IndicesQueriesRegistry queryRegistry, AggregatorParsers aggParsers, UsageService usageService) {
+        super(settings, MultiPercolateAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                MultiPercolateRequest::new, usageService);
         this.client = client;
         this.aggParsers = aggParsers;
         this.parseFieldMatcher = new ParseFieldMatcher(settings);

@@ -25,9 +25,12 @@ import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.tasks.TaskManager;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
+import org.elasticsearch.usage.UsageService;
 import org.junit.Before;
 
 import java.util.ArrayList;
@@ -41,9 +44,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.IntStream;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -71,7 +71,10 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
         String actionName = randomAsciiOfLength(randomInt(30));
         ActionFilters actionFilters = new ActionFilters(filters);
-        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY, actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY)) {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
+        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY,
+                actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY), usageService) {
             @Override
             protected void doExecute(TestRequest request, ActionListener<TestResponse> listener) {
                 listener.onResponse(new TestResponse());
@@ -151,7 +154,10 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
         String actionName = randomAsciiOfLength(randomInt(30));
         ActionFilters actionFilters = new ActionFilters(filters);
-        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY, actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY)) {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
+        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY,
+                actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY), usageService) {
             @Override
             protected void doExecute(TestRequest request, ActionListener<TestResponse> listener) {
                 listener.onResponse(new TestResponse());
@@ -235,7 +241,10 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
         String actionName = randomAsciiOfLength(randomInt(30));
         ActionFilters actionFilters = new ActionFilters(filters);
-        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY, actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY)) {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
+        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY,
+                actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY), usageService) {
             @Override
             protected void doExecute(TestRequest request, ActionListener<TestResponse> listener) {
                 listener.onResponse(new TestResponse());
@@ -292,7 +301,10 @@ public class TransportActionFilterChainTests extends ESTestCase {
 
         String actionName = randomAsciiOfLength(randomInt(30));
         ActionFilters actionFilters = new ActionFilters(filters);
-        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY, actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY)) {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
+        TransportAction<TestRequest, TestResponse> transportAction = new TransportAction<TestRequest, TestResponse>(Settings.EMPTY,
+                actionName, null, actionFilters, null, new TaskManager(Settings.EMPTY), usageService) {
             @Override
             protected void doExecute(TestRequest request, ActionListener<TestResponse> listener) {
                 listener.onResponse(new TestResponse());

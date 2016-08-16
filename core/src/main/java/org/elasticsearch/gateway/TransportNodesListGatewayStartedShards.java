@@ -46,6 +46,7 @@ import org.elasticsearch.index.store.Store;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,14 +70,11 @@ public class TransportNodesListGatewayStartedShards extends
     private final IndicesService indicesService;
 
     @Inject
-    public TransportNodesListGatewayStartedShards(Settings settings, ThreadPool threadPool,
-                                                  ClusterService clusterService, TransportService transportService,
-                                                  ActionFilters actionFilters,
-                                                  IndexNameExpressionResolver indexNameExpressionResolver,
-                                                  NodeEnvironment env, IndicesService indicesService) {
-        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters,
-              indexNameExpressionResolver, Request::new, NodeRequest::new, ThreadPool.Names.FETCH_SHARD_STARTED,
-              NodeGatewayStartedShards.class);
+    public TransportNodesListGatewayStartedShards(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            NodeEnvironment env, IndicesService indicesService, UsageService usageService) {
+        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, Request::new,
+                NodeRequest::new, ThreadPool.Names.FETCH_SHARD_STARTED, NodeGatewayStartedShards.class, usageService);
         this.nodeEnv = env;
         this.indicesService = indicesService;
     }

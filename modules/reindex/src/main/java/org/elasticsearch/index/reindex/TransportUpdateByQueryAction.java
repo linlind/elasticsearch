@@ -44,6 +44,7 @@ import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -56,9 +57,9 @@ public class TransportUpdateByQueryAction extends HandledTransportAction<UpdateB
     @Inject
     public TransportUpdateByQueryAction(Settings settings, ThreadPool threadPool, ActionFilters actionFilters,
             IndexNameExpressionResolver indexNameExpressionResolver, Client client, TransportService transportService,
-            ScriptService scriptService, ClusterService clusterService) {
+            ScriptService scriptService, ClusterService clusterService, UsageService usageService) {
         super(settings, UpdateByQueryAction.NAME, threadPool, transportService, actionFilters,
-                indexNameExpressionResolver, UpdateByQueryRequest::new);
+                indexNameExpressionResolver, UpdateByQueryRequest::new, usageService);
         this.client = client;
         this.scriptService = scriptService;
         this.clusterService = clusterService;

@@ -46,6 +46,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.indices.TypeMissingException;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,9 +70,10 @@ public class TransportGetFieldMappingsIndexAction extends TransportSingleShardAc
 
     @Inject
     public TransportGetFieldMappingsIndexAction(Settings settings, ClusterService clusterService, TransportService transportService,
-                                                IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
-                                                IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, GetFieldMappingsIndexRequest::new, ThreadPool.Names.MANAGEMENT);
+            IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                GetFieldMappingsIndexRequest::new, ThreadPool.Names.MANAGEMENT, usageService);
         this.clusterService = clusterService;
         this.indicesService = indicesService;
     }

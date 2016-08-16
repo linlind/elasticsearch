@@ -47,6 +47,7 @@ import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.lease.Releasable;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.engine.EngineClosedException;
 import org.elasticsearch.index.shard.IndexShard;
@@ -57,6 +58,7 @@ import org.elasticsearch.node.NodeClosedException;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESAllocationTestCase;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
@@ -65,6 +67,7 @@ import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseOptions;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -110,6 +113,8 @@ public class TransportReplicationActionTests extends ESTestCase {
     * indexShards is reset to null before each test and will be initialized upon request in the tests.
     */
 
+    private UsageService usageService;
+
     @BeforeClass
     public static void beforeClass() {
         threadPool = new TestThreadPool("ShardReplicationTests");
@@ -124,13 +129,17 @@ public class TransportReplicationActionTests extends ESTestCase {
         transportService = new TransportService(clusterService.getSettings(), transport, threadPool);
         transportService.start();
         transportService.acceptIncomingRequests();
-        action = new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool);
+        Discovery discovery = new NoopDiscovery();
+        usageService = new UsageService(discovery, clusterService.getSettings());
+        action = new Action(Settings.EMPTY, "testAction", transportService, clusterService, threadPool, usageService);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         clusterService.close();
+        usageService.close();
     }
 
     @AfterClass
@@ -406,6 +415,7 @@ public class TransportReplicationActionTests extends ESTestCase {
                     ActionListener<Action.PrimaryResult> actionListener, Action.PrimaryShardReference primaryShardReference,
                     boolean executeOnReplicas) {
                 return new NoopReplicationOperation(request, actionListener) {
+                    @Override
                     public void execute() throws Exception {
                         assertPhase(task, "primary");
                         assertFalse(executed.getAndSet(true));
@@ -453,6 +463,7 @@ public class TransportReplicationActionTests extends ESTestCase {
                     ActionListener<Action.PrimaryResult> actionListener, Action.PrimaryShardReference primaryShardReference,
                     boolean executeOnReplicas) {
                 return new NoopReplicationOperation(request, actionListener) {
+                    @Override
                     public void execute() throws Exception {
                         assertPhase(task, "primary");
                         assertFalse(executed.getAndSet(true));
@@ -656,7 +667,9 @@ public class TransportReplicationActionTests extends ESTestCase {
             ShardRoutingState.STARTED, ShardRoutingState.STARTED));
         boolean throwException = randomBoolean();
         final ReplicationTask task = maybeTask();
-        Action action = new Action(Settings.EMPTY, "testActionWithExceptions", transportService, clusterService, threadPool) {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
+        Action action = new Action(Settings.EMPTY, "testActionWithExceptions", transportService, clusterService, threadPool, usageService) {
             @Override
             protected ReplicaResult shardOperationOnReplica(Request request) {
                 assertIndexShardCounter(1);
@@ -773,13 +786,12 @@ public class TransportReplicationActionTests extends ESTestCase {
 
     class Action extends TransportReplicationAction<Request, Request, Response> {
 
-        Action(Settings settings, String actionName, TransportService transportService,
-               ClusterService clusterService,
-               ThreadPool threadPool) {
+        Action(Settings settings, String actionName, TransportService transportService, ClusterService clusterService,
+                ThreadPool threadPool, UsageService usageService) {
             super(settings, actionName, transportService, clusterService, null, threadPool,
-                new ShardStateAction(settings, clusterService, transportService, null, null, threadPool),
-                new ActionFilters(new HashSet<>()), new IndexNameExpressionResolver(Settings.EMPTY),
-                Request::new, Request::new, ThreadPool.Names.SAME);
+                    new ShardStateAction(settings, clusterService, transportService, null, null, threadPool),
+                    new ActionFilters(new HashSet<>()), new IndexNameExpressionResolver(Settings.EMPTY), Request::new, Request::new,
+                    ThreadPool.Names.SAME, usageService);
         }
 
         @Override

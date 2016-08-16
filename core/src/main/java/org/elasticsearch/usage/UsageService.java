@@ -58,6 +58,7 @@ public class UsageService extends AbstractComponent implements Closeable {
 
     @Override
     public void close() throws IOException {
+        discovery.close();
     }
 
 }

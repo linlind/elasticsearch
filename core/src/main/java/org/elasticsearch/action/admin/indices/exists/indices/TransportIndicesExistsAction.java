@@ -33,6 +33,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Indices exists action.
@@ -41,8 +42,10 @@ public class TransportIndicesExistsAction extends TransportMasterNodeReadAction<
 
     @Inject
     public TransportIndicesExistsAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                        ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, IndicesExistsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, IndicesExistsRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, IndicesExistsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                IndicesExistsRequest::new, usageService);
     }
 
     @Override

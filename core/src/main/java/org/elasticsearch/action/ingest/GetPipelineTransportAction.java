@@ -33,6 +33,7 @@ import org.elasticsearch.ingest.PipelineStore;
 import org.elasticsearch.node.service.NodeService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 public class GetPipelineTransportAction extends TransportMasterNodeReadAction<GetPipelineRequest, GetPipelineResponse> {
 
@@ -40,9 +41,10 @@ public class GetPipelineTransportAction extends TransportMasterNodeReadAction<Ge
 
     @Inject
     public GetPipelineTransportAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                      TransportService transportService, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver, NodeService nodeService) {
-        super(settings, GetPipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, GetPipelineRequest::new);
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            NodeService nodeService, UsageService usageService) {
+        super(settings, GetPipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                GetPipelineRequest::new, usageService);
         this.pipelineStore = nodeService.getIngestService().getPipelineStore();
     }
 

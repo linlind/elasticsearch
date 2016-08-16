@@ -55,6 +55,7 @@ import org.elasticsearch.indices.IndexClosedException;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,19 +85,20 @@ public class TransportBulkAction extends HandledTransportAction<BulkRequest, Bul
     public TransportBulkAction(Settings settings, ThreadPool threadPool, TransportService transportService, ClusterService clusterService,
                                TransportShardBulkAction shardBulkAction, TransportCreateIndexAction createIndexAction,
                                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                               AutoCreateIndex autoCreateIndex) {
+                               AutoCreateIndex autoCreateIndex, UsageService usageService) {
         this(settings, threadPool, transportService, clusterService,
                 shardBulkAction, createIndexAction,
                 actionFilters, indexNameExpressionResolver,
                 autoCreateIndex,
-                System::nanoTime);
+                System::nanoTime, usageService);
     }
 
     public TransportBulkAction(Settings settings, ThreadPool threadPool, TransportService transportService, ClusterService clusterService,
-                               TransportShardBulkAction shardBulkAction, TransportCreateIndexAction createIndexAction,
-                               ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                               AutoCreateIndex autoCreateIndex, LongSupplier relativeTimeProvider) {
-        super(settings, BulkAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, BulkRequest::new);
+            TransportShardBulkAction shardBulkAction, TransportCreateIndexAction createIndexAction, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, AutoCreateIndex autoCreateIndex, LongSupplier relativeTimeProvider,
+            UsageService usageService) {
+        super(settings, BulkAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, BulkRequest::new,
+                usageService);
         Objects.requireNonNull(relativeTimeProvider);
         this.clusterService = clusterService;
         this.shardBulkAction = shardBulkAction;

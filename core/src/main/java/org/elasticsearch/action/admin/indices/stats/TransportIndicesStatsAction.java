@@ -38,6 +38,7 @@ import org.elasticsearch.index.shard.ShardNotFoundException;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,10 +51,10 @@ public class TransportIndicesStatsAction extends TransportBroadcastByNodeAction<
 
     @Inject
     public TransportIndicesStatsAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                       TransportService transportService, IndicesService indicesService,
-                                       ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, IndicesStatsAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                IndicesStatsRequest::new, ThreadPool.Names.MANAGEMENT);
+                IndicesStatsRequest::new, ThreadPool.Names.MANAGEMENT, usageService);
         this.indicesService = indicesService;
     }
 

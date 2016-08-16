@@ -33,11 +33,14 @@ import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.LocalTransportAddress;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -67,6 +70,8 @@ public class TransportNodesActionTests extends ESTestCase {
     private ClusterService clusterService;
     private CapturingTransport transport;
     private TransportService transportService;
+
+    private UsageService usageService;
 
     public void testRequestIsSentToEachNode() throws Exception {
         TransportNodesAction action = getTestTransportNodesAction();
@@ -172,6 +177,7 @@ public class TransportNodesActionTests extends ESTestCase {
         THREAD_POOL = null;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -199,13 +205,17 @@ public class TransportNodesActionTests extends ESTestCase {
         stateBuilder.nodes(discoBuilder);
         ClusterState clusterState = stateBuilder.build();
         setState(clusterService, clusterState);
+        Discovery discovery = new NoopDiscovery();
+        usageService = new UsageService(discovery, clusterService.getSettings());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         clusterService.close();
         transport.close();
+        usageService.close();
     }
 
     public TestTransportNodesAction getTestTransportNodesAction() {
@@ -217,7 +227,7 @@ public class TransportNodesActionTests extends ESTestCase {
                 new ActionFilters(Collections.emptySet()),
                 TestNodesRequest::new,
                 TestNodeRequest::new,
-                ThreadPool.Names.SAME
+                ThreadPool.Names.SAME, usageService
         );
     }
 
@@ -230,7 +240,7 @@ public class TransportNodesActionTests extends ESTestCase {
             new ActionFilters(Collections.emptySet()),
             TestNodesRequest::new,
             TestNodeRequest::new,
-            ThreadPool.Names.SAME
+            ThreadPool.Names.SAME, usageService
         );
     }
 
@@ -242,11 +252,11 @@ public class TransportNodesActionTests extends ESTestCase {
     private static class TestTransportNodesAction
         extends TransportNodesAction<TestNodesRequest, TestNodesResponse, TestNodeRequest, TestNodeResponse> {
 
-        TestTransportNodesAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService
-                transportService, ActionFilters actionFilters, Supplier<TestNodesRequest> request,
-                                 Supplier<TestNodeRequest> nodeRequest, String nodeExecutor) {
-            super(settings, "indices:admin/test", threadPool, clusterService, transportService, actionFilters,
-                    null, request, nodeRequest, nodeExecutor, TestNodeResponse.class);
+        TestTransportNodesAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
+                ActionFilters actionFilters, Supplier<TestNodesRequest> request, Supplier<TestNodeRequest> nodeRequest, String nodeExecutor,
+                UsageService usageService) {
+            super(settings, "indices:admin/test", threadPool, clusterService, transportService, actionFilters, null, request, nodeRequest,
+                    nodeExecutor, TestNodeResponse.class, usageService);
         }
 
         @Override
@@ -279,10 +289,10 @@ public class TransportNodesActionTests extends ESTestCase {
     private static class DataNodesOnlyTransportNodesAction
         extends TestTransportNodesAction {
 
-        DataNodesOnlyTransportNodesAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService
-            transportService, ActionFilters actionFilters, Supplier<TestNodesRequest> request,
-                                          Supplier<TestNodeRequest> nodeRequest, String nodeExecutor) {
-            super(settings, threadPool, clusterService, transportService, actionFilters, request, nodeRequest, nodeExecutor);
+        DataNodesOnlyTransportNodesAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+                TransportService transportService, ActionFilters actionFilters, Supplier<TestNodesRequest> request,
+                Supplier<TestNodeRequest> nodeRequest, String nodeExecutor, UsageService usageService) {
+            super(settings, threadPool, clusterService, transportService, actionFilters, request, nodeRequest, nodeExecutor, usageService);
         }
 
         @Override

@@ -46,6 +46,7 @@ import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.function.Supplier;
 
@@ -61,9 +62,9 @@ public abstract class TransportInstanceSingleOperationAction<Request extends Ins
     final String shardActionName;
 
     protected TransportInstanceSingleOperationAction(Settings settings, String actionName, ThreadPool threadPool,
-                                                     ClusterService clusterService, TransportService transportService,
-                                                     ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
-        super(settings, actionName, threadPool, transportService, actionFilters, indexNameExpressionResolver, request);
+            ClusterService clusterService, TransportService transportService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, UsageService usageService) {
+        super(settings, actionName, threadPool, transportService, actionFilters, indexNameExpressionResolver, request, usageService);
         this.clusterService = clusterService;
         this.transportService = transportService;
         this.executor = executor();

@@ -49,6 +49,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Performs the index operation.
@@ -74,9 +75,9 @@ public class TransportIndexAction extends TransportWriteAction<IndexRequest, Ind
                                 IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
                                 TransportCreateIndexAction createIndexAction, MappingUpdatedAction mappingUpdatedAction,
                                 ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                AutoCreateIndex autoCreateIndex) {
+                                AutoCreateIndex autoCreateIndex, UsageService usageService) {
         super(settings, IndexAction.NAME, transportService, clusterService, indicesService, threadPool, shardStateAction,
-            actionFilters, indexNameExpressionResolver, IndexRequest::new, ThreadPool.Names.INDEX);
+            actionFilters, indexNameExpressionResolver, IndexRequest::new, ThreadPool.Names.INDEX, usageService);
         this.mappingUpdatedAction = mappingUpdatedAction;
         this.createIndexAction = createIndexAction;
         this.autoCreateIndex = autoCreateIndex;

@@ -30,8 +30,10 @@ import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.index.translog.Translog;
 import org.elasticsearch.index.translog.Translog.Location;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 
@@ -131,7 +133,8 @@ public class TransportWriteActionTests extends ESTestCase {
     private class TestAction extends TransportWriteAction<TestRequest, TestResponse> {
         protected TestAction() {
             super(Settings.EMPTY, "test", mock(TransportService.class), null, null, null, null, new ActionFilters(new HashSet<>()),
-                    new IndexNameExpressionResolver(Settings.EMPTY), TestRequest::new, ThreadPool.Names.SAME);
+                    new IndexNameExpressionResolver(Settings.EMPTY), TestRequest::new, ThreadPool.Names.SAME,
+                    new UsageService(new NoopDiscovery(), Settings.EMPTY));
         }
 
         @Override

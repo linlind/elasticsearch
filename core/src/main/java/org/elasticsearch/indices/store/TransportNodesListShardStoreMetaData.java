@@ -51,6 +51,7 @@ import org.elasticsearch.index.store.StoreFileMetaData;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -74,12 +75,11 @@ public class TransportNodesListShardStoreMetaData extends TransportNodesAction<T
     private final NodeEnvironment nodeEnv;
 
     @Inject
-    public TransportNodesListShardStoreMetaData(Settings settings, ThreadPool threadPool,
-                                                ClusterService clusterService, TransportService transportService,
-                                                IndicesService indicesService, NodeEnvironment nodeEnv, ActionFilters actionFilters,
-                                                IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-            Request::new, NodeRequest::new, ThreadPool.Names.FETCH_SHARD_STORE, NodeStoreFilesMetaData.class);
+    public TransportNodesListShardStoreMetaData(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, IndicesService indicesService, NodeEnvironment nodeEnv, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, ACTION_NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, Request::new,
+                NodeRequest::new, ThreadPool.Names.FETCH_SHARD_STORE, NodeStoreFilesMetaData.class, usageService);
         this.indicesService = indicesService;
         this.nodeEnv = nodeEnv;
     }

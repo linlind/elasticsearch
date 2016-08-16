@@ -58,6 +58,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.indices.analysis.AnalysisModule;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -80,8 +81,9 @@ public class TransportAnalyzeAction extends TransportSingleShardAction<AnalyzeRe
     @Inject
     public TransportAnalyzeAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
                                   IndicesService indicesService, ActionFilters actionFilters,
-                                  IndexNameExpressionResolver indexNameExpressionResolver, Environment environment) {
-        super(settings, AnalyzeAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, AnalyzeRequest::new, ThreadPool.Names.INDEX);
+            IndexNameExpressionResolver indexNameExpressionResolver, Environment environment, UsageService usageService) {
+        super(settings, AnalyzeAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                AnalyzeRequest::new, ThreadPool.Names.INDEX, usageService);
         this.indicesService = indicesService;
         this.environment = environment;
     }

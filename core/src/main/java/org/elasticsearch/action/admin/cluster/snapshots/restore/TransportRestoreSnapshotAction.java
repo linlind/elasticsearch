@@ -34,6 +34,7 @@ import org.elasticsearch.snapshots.RestoreService;
 import org.elasticsearch.snapshots.Snapshot;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Transport action for restore snapshot operation
@@ -43,9 +44,10 @@ public class TransportRestoreSnapshotAction extends TransportMasterNodeAction<Re
 
     @Inject
     public TransportRestoreSnapshotAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                          ThreadPool threadPool, RestoreService restoreService, ActionFilters actionFilters,
-                                          IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, RestoreSnapshotAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, RestoreSnapshotRequest::new);
+            ThreadPool threadPool, RestoreService restoreService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, RestoreSnapshotAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, RestoreSnapshotRequest::new, usageService);
         this.restoreService = restoreService;
     }
 

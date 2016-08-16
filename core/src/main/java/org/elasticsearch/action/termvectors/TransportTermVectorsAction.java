@@ -35,6 +35,7 @@ import org.elasticsearch.index.termvectors.TermVectorsService;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Performs the get operation.
@@ -46,9 +47,9 @@ public class TransportTermVectorsAction extends TransportSingleShardAction<TermV
     @Inject
     public TransportTermVectorsAction(Settings settings, ClusterService clusterService, TransportService transportService,
                                       IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver) {
+                                      IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, TermVectorsAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                TermVectorsRequest::new, ThreadPool.Names.GET);
+                TermVectorsRequest::new, ThreadPool.Names.GET, usageService);
         this.indicesService = indicesService;
 
     }

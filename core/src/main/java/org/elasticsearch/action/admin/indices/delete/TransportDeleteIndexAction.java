@@ -36,6 +36,7 @@ import org.elasticsearch.index.Index;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -51,9 +52,11 @@ public class TransportDeleteIndexAction extends TransportMasterNodeAction<Delete
 
     @Inject
     public TransportDeleteIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                      ThreadPool threadPool, MetaDataDeleteIndexService deleteIndexService, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver, DestructiveOperations destructiveOperations) {
-        super(settings, DeleteIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, DeleteIndexRequest::new);
+            ThreadPool threadPool, MetaDataDeleteIndexService deleteIndexService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, DestructiveOperations destructiveOperations,
+            UsageService usageService) {
+        super(settings, DeleteIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                DeleteIndexRequest::new, usageService);
         this.deleteIndexService = deleteIndexService;
         this.destructiveOperations = destructiveOperations;
     }

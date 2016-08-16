@@ -37,6 +37,7 @@ import org.elasticsearch.index.shard.IndexShard;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,9 +53,9 @@ public class TransportClearIndicesCacheAction extends TransportBroadcastByNodeAc
     @Inject
     public TransportClearIndicesCacheAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
                                             TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
-                                            IndexNameExpressionResolver indexNameExpressionResolver) {
+                                            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, ClearIndicesCacheAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                ClearIndicesCacheRequest::new, ThreadPool.Names.MANAGEMENT, false);
+                ClearIndicesCacheRequest::new, ThreadPool.Names.MANAGEMENT, false, usageService);
         this.indicesService = indicesService;
     }
 

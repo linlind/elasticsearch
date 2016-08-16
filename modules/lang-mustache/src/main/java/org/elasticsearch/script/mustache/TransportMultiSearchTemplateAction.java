@@ -28,6 +28,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.util.concurrent.AtomicArray;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,10 +38,10 @@ public class TransportMultiSearchTemplateAction extends HandledTransportAction<M
 
     @Inject
     public TransportMultiSearchTemplateAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                              ActionFilters actionFilters, IndexNameExpressionResolver resolver,
-                                              TransportSearchTemplateAction searchTemplateAction) {
+            ActionFilters actionFilters, IndexNameExpressionResolver resolver, TransportSearchTemplateAction searchTemplateAction,
+            UsageService usageService) {
         super(settings, MultiSearchTemplateAction.NAME, threadPool, transportService, actionFilters, resolver,
-                MultiSearchTemplateRequest::new);
+                MultiSearchTemplateRequest::new, usageService);
         this.searchTemplateAction = searchTemplateAction;
     }
 

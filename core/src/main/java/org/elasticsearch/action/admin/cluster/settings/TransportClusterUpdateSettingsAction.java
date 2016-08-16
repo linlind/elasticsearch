@@ -40,6 +40,7 @@ import org.elasticsearch.common.settings.ClusterSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  *
@@ -51,9 +52,11 @@ public class TransportClusterUpdateSettingsAction extends TransportMasterNodeAct
     private final ClusterSettings clusterSettings;
 
     @Inject
-    public TransportClusterUpdateSettingsAction(Settings settings, TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-                                                AllocationService allocationService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, ClusterSettings clusterSettings) {
-        super(settings, ClusterUpdateSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, ClusterUpdateSettingsRequest::new);
+    public TransportClusterUpdateSettingsAction(Settings settings, TransportService transportService, ClusterService clusterService,
+            ThreadPool threadPool, AllocationService allocationService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, ClusterSettings clusterSettings, UsageService usageService) {
+        super(settings, ClusterUpdateSettingsAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, ClusterUpdateSettingsRequest::new, usageService);
         this.allocationService = allocationService;
         this.clusterSettings = clusterSettings;
     }

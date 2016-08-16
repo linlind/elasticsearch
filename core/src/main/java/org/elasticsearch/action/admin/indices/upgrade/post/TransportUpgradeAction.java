@@ -44,6 +44,7 @@ import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -63,9 +64,11 @@ public class TransportUpgradeAction extends TransportBroadcastByNodeAction<Upgra
 
     @Inject
     public TransportUpgradeAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                  TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
-                                  IndexNameExpressionResolver indexNameExpressionResolver, TransportUpgradeSettingsAction upgradeSettingsAction) {
-        super(settings, UpgradeAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, UpgradeRequest::new, ThreadPool.Names.FORCE_MERGE);
+            TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, TransportUpgradeSettingsAction upgradeSettingsAction,
+            UsageService usageService) {
+        super(settings, UpgradeAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
+                UpgradeRequest::new, ThreadPool.Names.FORCE_MERGE, usageService);
         this.indicesService = indicesService;
         this.upgradeSettingsAction = upgradeSettingsAction;
     }

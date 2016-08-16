@@ -30,6 +30,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.List;
 
@@ -39,11 +40,11 @@ import java.util.List;
 public class TransportFlushAction extends TransportBroadcastReplicationAction<FlushRequest, FlushResponse, ShardFlushRequest, ReplicationResponse> {
 
     @Inject
-    public TransportFlushAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                TransportService transportService, ActionFilters actionFilters,
-                                IndexNameExpressionResolver indexNameExpressionResolver,
-                                TransportShardFlushAction replicatedFlushAction) {
-        super(FlushAction.NAME, FlushRequest::new, settings, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, replicatedFlushAction);
+    public TransportFlushAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            TransportShardFlushAction replicatedFlushAction, UsageService usageService) {
+        super(FlushAction.NAME, FlushRequest::new, settings, threadPool, clusterService, transportService, actionFilters,
+                indexNameExpressionResolver, replicatedFlushAction, usageService);
     }
 
     @Override

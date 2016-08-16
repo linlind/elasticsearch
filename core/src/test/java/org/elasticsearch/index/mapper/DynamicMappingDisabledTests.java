@@ -30,14 +30,17 @@ import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.indices.breaker.NoneCircuitBreakerService;
 import org.elasticsearch.test.ESSingleNodeTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
 import org.elasticsearch.transport.local.LocalTransport;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -84,6 +87,7 @@ public class DynamicMappingDisabledTests extends ESSingleNodeTestCase {
         autoCreateIndex = new AutoCreateIndex(settings, indexNameExpressionResolver);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -100,9 +104,11 @@ public class DynamicMappingDisabledTests extends ESSingleNodeTestCase {
     }
 
     public void testDynamicDisabled() {
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
         TransportIndexAction action = new TransportIndexAction(settings, transportService, clusterService,
                 indicesService, THREAD_POOL, shardStateAction, null, null, actionFilters, indexNameExpressionResolver,
-                autoCreateIndex);
+                autoCreateIndex, usageService);
 
         IndexRequest request = new IndexRequest("index", "type", "1");
         request.source("foo", 3);

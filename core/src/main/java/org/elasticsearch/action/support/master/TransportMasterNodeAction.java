@@ -43,6 +43,7 @@ import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.ConnectTransportException;
 import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.function.Supplier;
 
@@ -56,17 +57,17 @@ public abstract class TransportMasterNodeAction<Request extends MasterNodeReques
     final String executor;
 
     protected TransportMasterNodeAction(Settings settings, String actionName, TransportService transportService,
-                                        ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                        IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
-        this(settings, actionName, true, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, request);
+            ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, UsageService usageService) {
+        this(settings, actionName, true, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, request,
+                usageService);
     }
 
     protected TransportMasterNodeAction(Settings settings, String actionName, boolean canTripCircuitBreaker,
-                                        TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
-                                        ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                        Supplier<Request> request) {
+            TransportService transportService, ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request, UsageService usageService) {
         super(settings, actionName, canTripCircuitBreaker, threadPool, transportService, actionFilters, indexNameExpressionResolver,
-            request);
+                request, usageService);
         this.transportService = transportService;
         this.clusterService = clusterService;
         this.executor = executor();

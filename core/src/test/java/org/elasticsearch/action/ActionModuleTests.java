@@ -35,6 +35,7 @@ import org.elasticsearch.rest.action.main.RestMainAction;
 import org.elasticsearch.tasks.TaskManager;
 import org.elasticsearch.test.ESTestCase;
 import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.List;
 
@@ -69,8 +70,8 @@ public class ActionModuleTests extends ESTestCase {
         }
         class FakeTransportAction extends TransportAction<FakeRequest, ActionResponse> {
             protected FakeTransportAction(Settings settings, String actionName, ThreadPool threadPool, ActionFilters actionFilters,
-                    IndexNameExpressionResolver indexNameExpressionResolver, TaskManager taskManager) {
-                super(settings, actionName, threadPool, actionFilters, indexNameExpressionResolver, taskManager);
+                    IndexNameExpressionResolver indexNameExpressionResolver, TaskManager taskManager, UsageService usageService) {
+                super(settings, actionName, threadPool, actionFilters, indexNameExpressionResolver, taskManager, usageService);
             }
 
             @Override

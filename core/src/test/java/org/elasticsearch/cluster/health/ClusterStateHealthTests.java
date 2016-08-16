@@ -46,12 +46,15 @@ import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.util.set.Sets;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.gateway.NoopGatewayAllocator;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -96,6 +99,7 @@ public class ClusterStateHealthTests extends ESTestCase {
         transportService.acceptIncomingRequests();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -136,8 +140,10 @@ public class ClusterStateHealthTests extends ESTestCase {
         logger.info("--> waiting for listener to be called and cluster state being blocked");
         listenerCalled.await();
 
-        TransportClusterHealthAction action = new TransportClusterHealthAction(Settings.EMPTY, transportService,
-            clusterService, threadPool, new ActionFilters(new HashSet<>()), indexNameExpressionResolver, NoopGatewayAllocator.INSTANCE);
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, Settings.EMPTY);
+        TransportClusterHealthAction action = new TransportClusterHealthAction(Settings.EMPTY, transportService, clusterService, threadPool,
+                new ActionFilters(new HashSet<>()), indexNameExpressionResolver, NoopGatewayAllocator.INSTANCE, usageService);
         PlainActionFuture<ClusterHealthResponse> listener = new PlainActionFuture<>();
         action.execute(new ClusterHealthRequest(), listener);
 

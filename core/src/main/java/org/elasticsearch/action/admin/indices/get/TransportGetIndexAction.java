@@ -38,6 +38,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.List;
 
@@ -48,8 +49,10 @@ public class TransportGetIndexAction extends TransportClusterInfoAction<GetIndex
 
     @Inject
     public TransportGetIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                   ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, GetIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, GetIndexRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, GetIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                GetIndexRequest::new, usageService);
     }
 
     @Override

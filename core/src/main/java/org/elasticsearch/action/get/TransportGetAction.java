@@ -37,6 +37,7 @@ import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Performs the get operation.
@@ -48,9 +49,9 @@ public class TransportGetAction extends TransportSingleShardAction<GetRequest, G
     @Inject
     public TransportGetAction(Settings settings, ClusterService clusterService, TransportService transportService,
                               IndicesService indicesService, ThreadPool threadPool, ActionFilters actionFilters,
-                              IndexNameExpressionResolver indexNameExpressionResolver) {
+                              IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, GetAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                GetRequest::new, ThreadPool.Names.GET);
+                GetRequest::new, ThreadPool.Names.GET, usageService);
         this.indicesService = indicesService;
     }
 

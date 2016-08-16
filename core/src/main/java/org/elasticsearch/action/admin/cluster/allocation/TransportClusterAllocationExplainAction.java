@@ -53,6 +53,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.gateway.GatewayAllocator;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -80,9 +81,9 @@ public class TransportClusterAllocationExplainAction
                                                    IndexNameExpressionResolver indexNameExpressionResolver,
                                                    ClusterInfoService clusterInfoService, AllocationDeciders allocationDeciders,
                                                    ShardsAllocator shardAllocator, TransportIndicesShardStoresAction shardStoresAction,
-                                                   GatewayAllocator gatewayAllocator) {
+                                                   GatewayAllocator gatewayAllocator, UsageService usageService) {
         super(settings, ClusterAllocationExplainAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                indexNameExpressionResolver, ClusterAllocationExplainRequest::new);
+                indexNameExpressionResolver, ClusterAllocationExplainRequest::new, usageService);
         this.clusterInfoService = clusterInfoService;
         this.allocationDeciders = allocationDeciders;
         this.shardAllocator = shardAllocator;

@@ -32,6 +32,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 public class TransportGetStoredScriptAction extends TransportMasterNodeReadAction<GetStoredScriptRequest,
         GetStoredScriptResponse> {
@@ -40,10 +41,10 @@ public class TransportGetStoredScriptAction extends TransportMasterNodeReadActio
 
     @Inject
     public TransportGetStoredScriptAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                          ThreadPool threadPool, ActionFilters actionFilters,
-                                          IndexNameExpressionResolver indexNameExpressionResolver, ScriptService scriptService) {
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            ScriptService scriptService, UsageService usageService) {
         super(settings, GetStoredScriptAction.NAME, transportService, clusterService, threadPool, actionFilters,
-                indexNameExpressionResolver, GetStoredScriptRequest::new);
+                indexNameExpressionResolver, GetStoredScriptRequest::new, usageService);
         this.scriptService = scriptService;
     }
 

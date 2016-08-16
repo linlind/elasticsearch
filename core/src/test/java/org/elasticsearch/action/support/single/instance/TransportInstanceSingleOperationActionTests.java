@@ -39,15 +39,18 @@ import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.ConnectTransportException;
 import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -75,6 +78,8 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
 
     private TestTransportInstanceSingleOperationAction action;
 
+    private UsageService usageService;
+
     public static class Request extends InstanceShardOperationRequest<Request> {
         public Request() {
         }
@@ -88,8 +93,11 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
     class TestTransportInstanceSingleOperationAction extends TransportInstanceSingleOperationAction<Request, Response> {
         private final Map<ShardId, Object> shards = new HashMap<>();
 
-        public TestTransportInstanceSingleOperationAction(Settings settings, String actionName, TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
-            super(settings, actionName, THREAD_POOL, TransportInstanceSingleOperationActionTests.this.clusterService, transportService, actionFilters, indexNameExpressionResolver, request);
+        public TestTransportInstanceSingleOperationAction(Settings settings, String actionName, TransportService transportService,
+                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request,
+                UsageService usageService) {
+            super(settings, actionName, THREAD_POOL, TransportInstanceSingleOperationActionTests.this.clusterService, transportService,
+                    actionFilters, indexNameExpressionResolver, request, usageService);
         }
 
         public Map<ShardId, Object> getResults() {
@@ -137,6 +145,7 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
         THREAD_POOL = new TestThreadPool(TransportInstanceSingleOperationActionTests.class.getSimpleName());
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -145,21 +154,25 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
         transportService = new TransportService(clusterService.getSettings(), transport, THREAD_POOL);
         transportService.start();
         transportService.acceptIncomingRequests();
+        Discovery discovery = new NoopDiscovery();
+        usageService = new UsageService(discovery, clusterService.getSettings());
         action = new TestTransportInstanceSingleOperationAction(
                 Settings.EMPTY,
                 "indices:admin/test",
                 transportService,
                 new ActionFilters(new HashSet<ActionFilter>()),
                 new MyResolver(),
-                Request::new
+                Request::new, usageService
         );
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         clusterService.close();
         transportService.close();
+        usageService.close();
     }
 
     @AfterClass
@@ -302,7 +315,7 @@ public class TransportInstanceSingleOperationActionTests extends ESTestCase {
                 transportService,
                 new ActionFilters(new HashSet<>()),
                 new MyResolver(),
-                Request::new
+                Request::new, usageService
         ) {
             @Override
             protected void resolveRequest(ClusterState state, Request request) {

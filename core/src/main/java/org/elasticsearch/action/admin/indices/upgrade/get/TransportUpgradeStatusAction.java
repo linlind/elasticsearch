@@ -39,6 +39,7 @@ import org.elasticsearch.index.shard.IndexShard;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,10 +52,11 @@ public class TransportUpgradeStatusAction extends TransportBroadcastByNodeAction
     private final IndicesService indicesService;
 
     @Inject
-    public TransportUpgradeStatusAction(Settings settings, ThreadPool threadPool, ClusterService clusterService, TransportService transportService,
-                                        IndicesService indicesService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+    public TransportUpgradeStatusAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
+            TransportService transportService, IndicesService indicesService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, UpgradeStatusAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                UpgradeStatusRequest::new, ThreadPool.Names.MANAGEMENT);
+                UpgradeStatusRequest::new, ThreadPool.Names.MANAGEMENT, usageService);
         this.indicesService = indicesService;
     }
 

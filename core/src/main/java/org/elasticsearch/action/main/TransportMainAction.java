@@ -33,16 +33,17 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 public class TransportMainAction extends HandledTransportAction<MainRequest, MainResponse> {
 
     private final ClusterService clusterService;
 
     @Inject
-    public TransportMainAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                               ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                               ClusterService clusterService) {
-        super(settings, MainAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, MainRequest::new);
+    public TransportMainAction(Settings settings, ThreadPool threadPool, TransportService transportService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, ClusterService clusterService, UsageService usageService) {
+        super(settings, MainAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, MainRequest::new,
+                usageService);
         this.clusterService = clusterService;
     }
 

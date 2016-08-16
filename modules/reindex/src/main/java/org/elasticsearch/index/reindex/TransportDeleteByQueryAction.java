@@ -35,6 +35,7 @@ import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 public class TransportDeleteByQueryAction extends HandledTransportAction<DeleteByQueryRequest, BulkIndexByScrollResponse> {
     private final Client client;
@@ -43,9 +44,10 @@ public class TransportDeleteByQueryAction extends HandledTransportAction<DeleteB
 
     @Inject
     public TransportDeleteByQueryAction(Settings settings, ThreadPool threadPool, ActionFilters actionFilters,
-                                        IndexNameExpressionResolver resolver, Client client, TransportService transportService,
-                                        ScriptService scriptService, ClusterService clusterService) {
-        super(settings, DeleteByQueryAction.NAME, threadPool, transportService, actionFilters, resolver, DeleteByQueryRequest::new);
+            IndexNameExpressionResolver resolver, Client client, TransportService transportService, ScriptService scriptService,
+            ClusterService clusterService, UsageService usageService) {
+        super(settings, DeleteByQueryAction.NAME, threadPool, transportService, actionFilters, resolver, DeleteByQueryRequest::new,
+                usageService);
         this.client = client;
         this.scriptService = scriptService;
         this.clusterService = clusterService;

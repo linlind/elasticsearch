@@ -41,6 +41,7 @@ import org.elasticsearch.index.shard.DocsStats;
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Set;
 import java.util.function.IntFunction;
@@ -54,11 +55,11 @@ public class TransportShrinkAction extends TransportMasterNodeAction<ShrinkReque
     private final Client client;
 
     @Inject
-    public TransportShrinkAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                 ThreadPool threadPool, MetaDataCreateIndexService createIndexService,
-                                 ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Client client) {
+    public TransportShrinkAction(Settings settings, TransportService transportService, ClusterService clusterService, ThreadPool threadPool,
+            MetaDataCreateIndexService createIndexService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, Client client, UsageService usageService) {
         super(settings, ShrinkAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
-            ShrinkRequest::new);
+                ShrinkRequest::new, usageService);
         this.createIndexService = createIndexService;
         this.client = client;
     }

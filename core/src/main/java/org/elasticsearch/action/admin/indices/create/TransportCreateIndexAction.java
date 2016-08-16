@@ -32,6 +32,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Create index action.
@@ -42,9 +43,10 @@ public class TransportCreateIndexAction extends TransportMasterNodeAction<Create
 
     @Inject
     public TransportCreateIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                      ThreadPool threadPool, MetaDataCreateIndexService createIndexService,
-                                      ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, CreateIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, CreateIndexRequest::new);
+            ThreadPool threadPool, MetaDataCreateIndexService createIndexService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, CreateIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                CreateIndexRequest::new, usageService);
         this.createIndexService = createIndexService;
     }
 

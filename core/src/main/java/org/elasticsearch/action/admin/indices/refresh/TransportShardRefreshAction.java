@@ -34,6 +34,7 @@ import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 
 public class TransportShardRefreshAction
@@ -43,10 +44,11 @@ public class TransportShardRefreshAction
 
     @Inject
     public TransportShardRefreshAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                       IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
-                                       ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, NAME, transportService, clusterService, indicesService, threadPool, shardStateAction, actionFilters,
-                indexNameExpressionResolver, BasicReplicationRequest::new, BasicReplicationRequest::new, ThreadPool.Names.REFRESH);
+                indexNameExpressionResolver, BasicReplicationRequest::new, BasicReplicationRequest::new, ThreadPool.Names.REFRESH,
+                usageService);
     }
 
     @Override

@@ -30,6 +30,7 @@ import org.elasticsearch.search.action.SearchTransportService;
 import org.elasticsearch.search.controller.SearchPhaseController;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import static org.elasticsearch.action.search.ParsedScrollId.QUERY_AND_FETCH_TYPE;
 import static org.elasticsearch.action.search.ParsedScrollId.QUERY_THEN_FETCH_TYPE;
@@ -46,11 +47,10 @@ public class TransportSearchScrollAction extends HandledTransportAction<SearchSc
 
     @Inject
     public TransportSearchScrollAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                       ClusterService clusterService, SearchTransportService searchTransportService,
-                                       SearchPhaseController searchPhaseController,
-                                       ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            ClusterService clusterService, SearchTransportService searchTransportService, SearchPhaseController searchPhaseController,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, SearchScrollAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
-                SearchScrollRequest::new);
+                SearchScrollRequest::new, usageService);
         this.clusterService = clusterService;
         this.searchTransportService = searchTransportService;
         this.searchPhaseController = searchPhaseController;

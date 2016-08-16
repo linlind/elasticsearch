@@ -54,6 +54,7 @@ import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,9 +94,9 @@ public abstract class TransportBroadcastByNodeAction<Request extends BroadcastRe
         ActionFilters actionFilters,
         IndexNameExpressionResolver indexNameExpressionResolver,
         Supplier<Request> request,
-        String executor) {
+        String executor, UsageService usageService) {
         this(settings, actionName, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver, request,
-            executor, true);
+            executor, true, usageService);
     }
 
     public TransportBroadcastByNodeAction(
@@ -108,9 +109,9 @@ public abstract class TransportBroadcastByNodeAction<Request extends BroadcastRe
             IndexNameExpressionResolver indexNameExpressionResolver,
             Supplier<Request> request,
             String executor,
-            boolean canTripCircuitBreaker) {
+            boolean canTripCircuitBreaker, UsageService usageService) {
         super(settings, actionName, canTripCircuitBreaker, threadPool, transportService, actionFilters, indexNameExpressionResolver,
-            request);
+            request, usageService);
 
         this.clusterService = clusterService;
         this.transportService = transportService;

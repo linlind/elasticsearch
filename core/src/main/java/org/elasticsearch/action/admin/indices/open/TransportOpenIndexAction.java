@@ -36,6 +36,7 @@ import org.elasticsearch.index.Index;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  * Open index action
@@ -47,10 +48,11 @@ public class TransportOpenIndexAction extends TransportMasterNodeAction<OpenInde
 
     @Inject
     public TransportOpenIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                    ThreadPool threadPool, MetaDataIndexStateService indexStateService,
-                                    ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                    DestructiveOperations destructiveOperations) {
-        super(settings, OpenIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, OpenIndexRequest::new);
+            ThreadPool threadPool, MetaDataIndexStateService indexStateService, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, DestructiveOperations destructiveOperations,
+            UsageService usageService) {
+        super(settings, OpenIndexAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                OpenIndexRequest::new, usageService);
         this.indexStateService = indexStateService;
         this.destructiveOperations = destructiveOperations;
     }

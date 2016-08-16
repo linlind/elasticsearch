@@ -51,6 +51,7 @@ import org.elasticsearch.search.rescore.RescoreSearchContext;
 import org.elasticsearch.search.rescore.Rescorer;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
 
@@ -73,9 +74,9 @@ public class TransportExplainAction extends TransportSingleShardAction<ExplainRe
     public TransportExplainAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
             TransportService transportService, IndicesService indicesService, ScriptService scriptService,
             BigArrays bigArrays, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-            FetchPhase fetchPhase) {
+            FetchPhase fetchPhase, UsageService usageService) {
         super(settings, ExplainAction.NAME, threadPool, clusterService, transportService, actionFilters, indexNameExpressionResolver,
-                ExplainRequest::new, ThreadPool.Names.GET);
+                ExplainRequest::new, ThreadPool.Names.GET, usageService);
         this.indicesService = indicesService;
         this.scriptService = scriptService;
         this.bigArrays = bigArrays;

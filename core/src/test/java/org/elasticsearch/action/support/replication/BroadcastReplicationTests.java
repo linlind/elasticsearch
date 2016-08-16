@@ -18,7 +18,6 @@
  */
 package org.elasticsearch.action.support.replication;
 
-import org.elasticsearch.Version;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.NoShardAvailableActionException;
 import org.elasticsearch.action.ShardOperationFailedException;
@@ -38,16 +37,19 @@ import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.util.concurrent.ConcurrentCollections;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.indices.breaker.CircuitBreakerService;
 import org.elasticsearch.indices.breaker.NoneCircuitBreakerService;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
 import org.elasticsearch.transport.local.LocalTransport;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -79,6 +81,7 @@ public class BroadcastReplicationTests extends ESTestCase {
     private ClusterService clusterService;
     private TransportService transportService;
     private TestBroadcastReplicationAction broadcastReplicationAction;
+    private UsageService usageService;
 
     @BeforeClass
     public static void beforeClass() {
@@ -95,14 +98,19 @@ public class BroadcastReplicationTests extends ESTestCase {
         transportService = new TransportService(clusterService.getSettings(), transport, threadPool);
         transportService.start();
         transportService.acceptIncomingRequests();
-        broadcastReplicationAction = new TestBroadcastReplicationAction(Settings.EMPTY, threadPool, clusterService, transportService, new ActionFilters(new HashSet<ActionFilter>()), new IndexNameExpressionResolver(Settings.EMPTY), null);
+        Discovery discovery = new NoopDiscovery();
+        usageService = new UsageService(discovery, clusterService.getSettings());
+        broadcastReplicationAction = new TestBroadcastReplicationAction(Settings.EMPTY, threadPool, clusterService, transportService,
+                new ActionFilters(new HashSet<ActionFilter>()), new IndexNameExpressionResolver(Settings.EMPTY), null, usageService);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         clusterService.close();
         transportService.close();
+        usageService.close();
     }
 
     @AfterClass
@@ -199,10 +207,10 @@ public class BroadcastReplicationTests extends ESTestCase {
         protected final Set<Tuple<ShardId, ActionListener<ReplicationResponse>>> capturedShardRequests = ConcurrentCollections.newConcurrentSet();
 
         public TestBroadcastReplicationAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                              TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                              TransportReplicationAction replicatedBroadcastShardAction) {
+                TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+                TransportReplicationAction replicatedBroadcastShardAction, UsageService usageService) {
             super("test-broadcast-replication-action", DummyBroadcastRequest::new, settings, threadPool, clusterService, transportService,
-                    actionFilters, indexNameExpressionResolver, replicatedBroadcastShardAction);
+                    actionFilters, indexNameExpressionResolver, replicatedBroadcastShardAction, usageService);
         }
 
         @Override

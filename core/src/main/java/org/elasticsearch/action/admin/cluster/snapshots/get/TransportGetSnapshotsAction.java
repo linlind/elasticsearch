@@ -36,6 +36,7 @@ import org.elasticsearch.snapshots.SnapshotMissingException;
 import org.elasticsearch.snapshots.SnapshotsService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,9 +54,9 @@ public class TransportGetSnapshotsAction extends TransportMasterNodeAction<GetSn
     @Inject
     public TransportGetSnapshotsAction(Settings settings, TransportService transportService, ClusterService clusterService,
                                        ThreadPool threadPool, SnapshotsService snapshotsService, ActionFilters actionFilters,
-                                       IndexNameExpressionResolver indexNameExpressionResolver) {
+                                       IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, GetSnapshotsAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
-              GetSnapshotsRequest::new);
+              GetSnapshotsRequest::new, usageService);
         this.snapshotsService = snapshotsService;
     }
 

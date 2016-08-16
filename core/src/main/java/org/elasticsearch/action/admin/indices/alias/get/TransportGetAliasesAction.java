@@ -32,6 +32,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.List;
 
@@ -41,8 +42,10 @@ public class TransportGetAliasesAction extends TransportMasterNodeReadAction<Get
 
     @Inject
     public TransportGetAliasesAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                     ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, GetAliasesAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, GetAliasesRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, GetAliasesAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                GetAliasesRequest::new, usageService);
     }
 
     @Override
@@ -65,7 +68,7 @@ public class TransportGetAliasesAction extends TransportMasterNodeReadAction<Get
     protected void masterOperation(GetAliasesRequest request, ClusterState state, ActionListener<GetAliasesResponse> listener) {
         String[] concreteIndices = indexNameExpressionResolver.concreteIndexNames(state, request);
         @SuppressWarnings("unchecked")
-                ImmutableOpenMap<String, List<AliasMetaData>> result = (ImmutableOpenMap) state.metaData().findAliases(request.aliases(), concreteIndices);
+                ImmutableOpenMap<String, List<AliasMetaData>> result = state.metaData().findAliases(request.aliases(), concreteIndices);
         listener.onResponse(new GetAliasesResponse(result));
     }
 

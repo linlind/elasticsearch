@@ -35,6 +35,7 @@ import org.elasticsearch.search.action.SearchTransportService;
 import org.elasticsearch.search.controller.SearchPhaseController;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Map;
 import java.util.Set;
@@ -54,10 +55,10 @@ public class TransportSearchAction extends HandledTransportAction<SearchRequest,
 
     @Inject
     public TransportSearchAction(Settings settings, ThreadPool threadPool, SearchPhaseController searchPhaseController,
-                                 TransportService transportService, SearchTransportService searchTransportService,
-                                 ClusterService clusterService, ActionFilters actionFilters, IndexNameExpressionResolver
-                                             indexNameExpressionResolver) {
-        super(settings, SearchAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, SearchRequest::new);
+            TransportService transportService, SearchTransportService searchTransportService, ClusterService clusterService,
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, SearchAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, SearchRequest::new,
+                usageService);
         this.searchPhaseController = searchPhaseController;
         this.searchTransportService = searchTransportService;
         this.clusterService = clusterService;

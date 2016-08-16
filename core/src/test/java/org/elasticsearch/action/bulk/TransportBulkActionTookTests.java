@@ -35,12 +35,15 @@ import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.util.concurrent.AtomicArray;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.test.transport.CapturingTransport;
 import org.elasticsearch.threadpool.TestThreadPool;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -73,12 +76,14 @@ public class TransportBulkActionTookTests extends ESTestCase {
         threadPool = null;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         clusterService = createClusterService(threadPool);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -92,6 +97,8 @@ public class TransportBulkActionTookTests extends ESTestCase {
         transportService.acceptIncomingRequests();
         IndexNameExpressionResolver resolver = new Resolver(Settings.EMPTY);
         ActionFilters actionFilters = new ActionFilters(new HashSet<>());
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
 
         TransportCreateIndexAction createIndexAction = new TransportCreateIndexAction(
                 Settings.EMPTY,
@@ -100,7 +107,7 @@ public class TransportBulkActionTookTests extends ESTestCase {
                 threadPool,
                 null,
                 actionFilters,
-                resolver);
+                resolver, usageService);
 
         if (controlled) {
 
@@ -114,7 +121,7 @@ public class TransportBulkActionTookTests extends ESTestCase {
                     actionFilters,
                     resolver,
                     null,
-                    expected::get) {
+                    expected::get, usageService) {
                 @Override
                 public void executeBulk(BulkRequest bulkRequest, ActionListener<BulkResponse> listener) {
                     expected.set(1000000);
@@ -143,7 +150,7 @@ public class TransportBulkActionTookTests extends ESTestCase {
                     actionFilters,
                     resolver,
                     null,
-                    System::nanoTime) {
+                    System::nanoTime, usageService) {
                 @Override
                 public void executeBulk(BulkRequest bulkRequest, ActionListener<BulkResponse> listener) {
                     long elapsed = spinForAtLeastOneMillisecond();
@@ -220,28 +227,12 @@ public class TransportBulkActionTookTests extends ESTestCase {
 
     static class TestTransportBulkAction extends TransportBulkAction {
 
-        public TestTransportBulkAction(
-                Settings settings,
-                ThreadPool threadPool,
-                TransportService transportService,
-                ClusterService clusterService,
-                TransportShardBulkAction shardBulkAction,
-                TransportCreateIndexAction createIndexAction,
-                ActionFilters actionFilters,
-                IndexNameExpressionResolver indexNameExpressionResolver,
-                AutoCreateIndex autoCreateIndex,
-                LongSupplier relativeTimeProvider) {
-            super(
-                    settings,
-                    threadPool,
-                    transportService,
-                    clusterService,
-                    shardBulkAction,
-                    createIndexAction,
-                    actionFilters,
-                    indexNameExpressionResolver,
-                    autoCreateIndex,
-                    relativeTimeProvider);
+        public TestTransportBulkAction(Settings settings, ThreadPool threadPool, TransportService transportService,
+                ClusterService clusterService, TransportShardBulkAction shardBulkAction, TransportCreateIndexAction createIndexAction,
+                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, AutoCreateIndex autoCreateIndex,
+                LongSupplier relativeTimeProvider, UsageService usageService) {
+            super(settings, threadPool, transportService, clusterService, shardBulkAction, createIndexAction, actionFilters,
+                    indexNameExpressionResolver, autoCreateIndex, relativeTimeProvider, usageService);
         }
 
         @Override
@@ -258,15 +249,11 @@ public class TransportBulkActionTookTests extends ESTestCase {
 
     static class TestTransportCreateIndexAction extends TransportCreateIndexAction {
 
-        public TestTransportCreateIndexAction(
-                Settings settings,
-                TransportService transportService,
-                ClusterService clusterService,
-                ThreadPool threadPool,
-                MetaDataCreateIndexService createIndexService,
-                ActionFilters actionFilters,
-                IndexNameExpressionResolver indexNameExpressionResolver) {
-            super(settings, transportService, clusterService, threadPool, createIndexService, actionFilters, indexNameExpressionResolver);
+        public TestTransportCreateIndexAction(Settings settings, TransportService transportService, ClusterService clusterService,
+                ThreadPool threadPool, MetaDataCreateIndexService createIndexService, ActionFilters actionFilters,
+                IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+            super(settings, transportService, clusterService, threadPool, createIndexService, actionFilters, indexNameExpressionResolver,
+                    usageService);
         }
 
         @Override

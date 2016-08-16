@@ -39,6 +39,7 @@ import org.elasticsearch.ingest.IngestInfo;
 import org.elasticsearch.node.service.NodeService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +52,10 @@ public class PutPipelineTransportAction extends TransportMasterNodeAction<PutPip
 
     @Inject
     public PutPipelineTransportAction(Settings settings, ThreadPool threadPool, ClusterService clusterService,
-                                      TransportService transportService, ActionFilters actionFilters,
-                                      IndexNameExpressionResolver indexNameExpressionResolver, NodeService nodeService,
-                                      TransportNodesInfoAction nodesInfoAction) {
-        super(settings, PutPipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, PutPipelineRequest::new);
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            NodeService nodeService, TransportNodesInfoAction nodesInfoAction, UsageService usageService) {
+        super(settings, PutPipelineAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver,
+                PutPipelineRequest::new, usageService);
         this.clusterService = clusterService;
         this.nodesInfoAction = nodesInfoAction;
         this.pipelineStore = nodeService.getIngestService().getPipelineStore();

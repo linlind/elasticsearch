@@ -32,6 +32,7 @@ import org.elasticsearch.index.shard.IndexShard;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 /**
  *
@@ -42,10 +43,11 @@ public class TransportShardFlushAction extends TransportReplicationAction<ShardF
 
     @Inject
     public TransportShardFlushAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                     IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction,
-                                     ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
+            IndicesService indicesService, ThreadPool threadPool, ShardStateAction shardStateAction, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
         super(settings, NAME, transportService, clusterService, indicesService, threadPool, shardStateAction,
-            actionFilters, indexNameExpressionResolver, ShardFlushRequest::new, ShardFlushRequest::new, ThreadPool.Names.FLUSH);
+                actionFilters, indexNameExpressionResolver, ShardFlushRequest::new, ShardFlushRequest::new, ThreadPool.Names.FLUSH,
+                usageService);
     }
 
     @Override

@@ -50,6 +50,7 @@ import org.elasticsearch.gateway.TransportNodesListGatewayStartedShards.NodeGate
 import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,9 +69,11 @@ public class TransportIndicesShardStoresAction extends TransportMasterNodeReadAc
     private final TransportNodesListGatewayStartedShards listShardStoresInfo;
 
     @Inject
-    public TransportIndicesShardStoresAction(Settings settings, TransportService transportService, ClusterService clusterService, ThreadPool threadPool, ActionFilters actionFilters,
-                                             IndexNameExpressionResolver indexNameExpressionResolver, TransportNodesListGatewayStartedShards listShardStoresInfo) {
-        super(settings, IndicesShardStoresAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, IndicesShardStoresRequest::new);
+    public TransportIndicesShardStoresAction(Settings settings, TransportService transportService, ClusterService clusterService,
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            TransportNodesListGatewayStartedShards listShardStoresInfo, UsageService usageService) {
+        super(settings, IndicesShardStoresAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, IndicesShardStoresRequest::new, usageService);
         this.listShardStoresInfo = listShardStoresInfo;
     }
 

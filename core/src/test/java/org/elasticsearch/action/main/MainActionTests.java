@@ -30,19 +30,20 @@ import org.elasticsearch.cluster.block.ClusterBlockLevel;
 import org.elasticsearch.cluster.block.ClusterBlocks;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.service.ClusterService;
-import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESTestCase;
+import org.elasticsearch.test.NoopDiscovery;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -111,8 +112,10 @@ public class MainActionTests extends ESTestCase {
         ClusterState state = ClusterState.builder(clusterName).blocks(blocks).build();
         when(clusterService.state()).thenReturn(state);
 
+        Discovery discovery = new NoopDiscovery();
+        UsageService usageService = new UsageService(discovery, clusterService.getSettings());
         TransportMainAction action = new TransportMainAction(settings, mock(ThreadPool.class), mock(TransportService.class),
-            mock(ActionFilters.class), mock(IndexNameExpressionResolver.class), clusterService);
+                mock(ActionFilters.class), mock(IndexNameExpressionResolver.class), clusterService, usageService);
         AtomicReference<MainResponse> responseRef = new AtomicReference<>();
         action.doExecute(new MainRequest(), new ActionListener<MainResponse>() {
             @Override

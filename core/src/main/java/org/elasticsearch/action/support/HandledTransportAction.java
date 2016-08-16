@@ -28,6 +28,7 @@ import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.function.Supplier;
 
@@ -37,15 +38,16 @@ import java.util.function.Supplier;
 public abstract class HandledTransportAction<Request extends ActionRequest<Request>, Response extends ActionResponse>
         extends TransportAction<Request, Response> {
     protected HandledTransportAction(Settings settings, String actionName, ThreadPool threadPool, TransportService transportService,
-                                     ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
-                                     Supplier<Request> request) {
-        this(settings, actionName, true, threadPool, transportService, actionFilters, indexNameExpressionResolver, request);
+            ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request,
+            UsageService usageService) {
+        this(settings, actionName, true, threadPool, transportService, actionFilters, indexNameExpressionResolver, request, usageService);
     }
 
     protected HandledTransportAction(Settings settings, String actionName, boolean canTripCircuitBreaker, ThreadPool threadPool,
-                                     TransportService transportService, ActionFilters actionFilters,
-                                     IndexNameExpressionResolver indexNameExpressionResolver, Supplier<Request> request) {
-        super(settings, actionName, threadPool, actionFilters, indexNameExpressionResolver, transportService.getTaskManager());
+            TransportService transportService, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            Supplier<Request> request, UsageService usageService) {
+        super(settings, actionName, threadPool, actionFilters, indexNameExpressionResolver, transportService.getTaskManager(),
+                usageService);
         transportService.registerRequestHandler(actionName, request, ThreadPool.Names.SAME, false, canTripCircuitBreaker,
             new TransportHandler());
     }

@@ -33,6 +33,7 @@ import org.elasticsearch.common.util.concurrent.AtomicArray;
 import org.elasticsearch.common.util.concurrent.EsExecutors;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -46,9 +47,10 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
 
     @Inject
     public TransportMultiSearchAction(Settings settings, ThreadPool threadPool, TransportService transportService,
-                                ClusterService clusterService, TransportSearchAction searchAction,
-                                ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, MultiSearchAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, MultiSearchRequest::new);
+            ClusterService clusterService, TransportSearchAction searchAction, ActionFilters actionFilters,
+            IndexNameExpressionResolver indexNameExpressionResolver, UsageService usageService) {
+        super(settings, MultiSearchAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                MultiSearchRequest::new, usageService);
         this.clusterService = clusterService;
         this.searchAction = searchAction;
         this.availableProcessors = EsExecutors.boundedNumberOfProcessors(settings);
@@ -56,9 +58,10 @@ public class TransportMultiSearchAction extends HandledTransportAction<MultiSear
 
     // For testing only:
     TransportMultiSearchAction(ThreadPool threadPool, ActionFilters actionFilters, TransportService transportService,
-                               ClusterService clusterService, TransportAction<SearchRequest, SearchResponse> searchAction,
-                               IndexNameExpressionResolver indexNameExpressionResolver, int availableProcessors) {
-        super(Settings.EMPTY, MultiSearchAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver, MultiSearchRequest::new);
+            ClusterService clusterService, TransportAction<SearchRequest, SearchResponse> searchAction,
+            IndexNameExpressionResolver indexNameExpressionResolver, int availableProcessors, UsageService usageService) {
+        super(Settings.EMPTY, MultiSearchAction.NAME, threadPool, transportService, actionFilters, indexNameExpressionResolver,
+                MultiSearchRequest::new, usageService);
         this.clusterService = clusterService;
         this.searchAction = searchAction;
         this.availableProcessors = availableProcessors;

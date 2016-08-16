@@ -36,6 +36,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.repositories.RepositoryMissingException;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
+import org.elasticsearch.usage.UsageService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,8 +51,10 @@ public class TransportGetRepositoriesAction extends TransportMasterNodeReadActio
 
     @Inject
     public TransportGetRepositoriesAction(Settings settings, TransportService transportService, ClusterService clusterService,
-                                          ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver) {
-        super(settings, GetRepositoriesAction.NAME, transportService, clusterService, threadPool, actionFilters, indexNameExpressionResolver, GetRepositoriesRequest::new);
+            ThreadPool threadPool, ActionFilters actionFilters, IndexNameExpressionResolver indexNameExpressionResolver,
+            UsageService usageService) {
+        super(settings, GetRepositoriesAction.NAME, transportService, clusterService, threadPool, actionFilters,
+                indexNameExpressionResolver, GetRepositoriesRequest::new, usageService);
     }
 
     @Override
