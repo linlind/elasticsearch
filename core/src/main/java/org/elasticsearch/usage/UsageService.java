@@ -25,40 +25,36 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.discovery.Discovery;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class UsageService extends AbstractComponent implements Closeable {
+public class UsageService extends AbstractComponent {
 
     private final Discovery discovery;
-    private final Map<String, Long> actionUsage;
+    private final Map<String, AtomicLong> actionUsage;
     private long sinceTime;
 
     @Inject
     public UsageService(Discovery discovery, Settings settings) {
         super(settings);
         this.discovery = discovery;
-        this.actionUsage = new HashMap<>();
+        this.actionUsage = new ConcurrentHashMap<>();
         this.sinceTime = System.currentTimeMillis();
     }
 
     public void addActionCall(String actionName) {
-        Long counter = actionUsage.get(actionName);
-        if (counter == null) {
-            counter = 0L;
-        }
-        actionUsage.put(actionName, ++counter);
+        AtomicLong counter = actionUsage.computeIfAbsent(actionName, key -> new AtomicLong());
+        counter.getAndIncrement();
     }
 
     public NodeUsage getUsageStats() {
-        return new NodeUsage(discovery.localNode(), System.currentTimeMillis(), sinceTime, actionUsage);
-    }
-
-    @Override
-    public void close() throws IOException {
-        discovery.close();
+        Map<String, Long> actionUsageMap = new HashMap<>();
+        actionUsage.forEach((key, value) -> {
+            actionUsageMap.put(key, value.get());
+        });
+        return new NodeUsage(discovery.localNode(), System.currentTimeMillis(), sinceTime, actionUsageMap);
     }
 
 }
