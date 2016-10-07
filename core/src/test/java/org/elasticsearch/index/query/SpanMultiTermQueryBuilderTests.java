@@ -19,12 +19,16 @@
 
 package org.elasticsearch.index.query;
 
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.spans.SpanBoostQuery;
 import org.apache.lucene.search.spans.SpanMultiTermQueryWrapper;
 import org.apache.lucene.search.spans.SpanQuery;
+import org.elasticsearch.common.io.stream.StreamOutput;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.internal.SearchContext;
 import org.elasticsearch.test.AbstractQueryTestCase;
 
@@ -66,22 +70,50 @@ public class SpanMultiTermQueryBuilderTests extends AbstractQueryTestCase<SpanMu
     }
 
     /**
-     * test checks that we throw an {@link UnsupportedOperationException} if the query wrapped
-     * by {@link SpanMultiTermQueryBuilder} does not generate a lucene {@link MultiTermQuery}.
-     * This is currently the case for {@link RangeQueryBuilder} when the target field is mapped
-     * to a date.
+     * test checks that we throw an {@link UnsupportedOperationException} if the
+     * query wrapped by {@link SpanMultiTermQueryBuilder} does not generate a
+     * lucene {@link MultiTermQuery}.
+     *
      */
     public void testUnsupportedInnerQueryType() throws IOException {
-        QueryShardContext context = createShardContext();
-        // test makes only sense if we have at least one type registered with date field mapping
-        assumeTrue("test runs only if there is a registered type",
-                getCurrentTypes().length > 0 && context.fieldMapper(DATE_FIELD_NAME) != null);
-
-        RangeQueryBuilder query = new RangeQueryBuilder(DATE_FIELD_NAME);
+        MultiTermQueryBuilder query = new FakeMultiTermQueryBuilder();
         SpanMultiTermQueryBuilder spamMultiTermQuery = new SpanMultiTermQueryBuilder(query);
         UnsupportedOperationException e = expectThrows(UnsupportedOperationException.class,
                 () -> spamMultiTermQuery.toQuery(createShardContext()));
         assertThat(e.getMessage(), containsString("unsupported inner query, should be " + MultiTermQuery.class.getName()));
+    }
+
+    private static class FakeMultiTermQueryBuilder extends AbstractQueryBuilder<FakeMultiTermQueryBuilder>
+            implements MultiTermQueryBuilder {
+
+        @Override
+        public String getWriteableName() {
+            return "foo";
+        }
+
+        @Override
+        protected void doWriteTo(StreamOutput out) throws IOException {
+        }
+
+        @Override
+        protected void doXContent(XContentBuilder builder, Params params) throws IOException {
+        }
+
+        @Override
+        protected Query doToQuery(QueryShardContext context) throws IOException {
+            return new TermQuery(new Term("foo", "bar"));
+        }
+
+        @Override
+        protected boolean doEquals(FakeMultiTermQueryBuilder other) {
+            return false;
+        }
+
+        @Override
+        protected int doHashCode() {
+            return 0;
+        }
+
     }
 
     public void testToQueryInnerSpanMultiTerm() throws IOException {

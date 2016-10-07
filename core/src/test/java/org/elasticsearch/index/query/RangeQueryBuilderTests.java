@@ -228,7 +228,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
                 "        }\n" +
                 "    }\n" +
                 "}";
-        Query parsedQuery = parseQuery(query).toQuery(createShardContext()).rewrite(null);
+        Query parsedQuery = parseQuery(query).toQuery(createShardContext());
         assertThat(parsedQuery, either(instanceOf(LegacyNumericRangeQuery.class)).or(instanceOf(PointRangeQuery.class)));
 
         if (parsedQuery instanceof LegacyNumericRangeQuery) {
@@ -256,8 +256,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
                 "        }\n" +
                 "    }\n" +
                 "}";
-        Query rewrittenQuery = parseQuery(invalidQuery).toQuery(createShardContext());
-        expectThrows(ElasticsearchParseException.class, () -> rewrittenQuery.rewrite(null));
+        expectThrows(ElasticsearchParseException.class, () -> parseQuery(invalidQuery).toQuery(createShardContext()));
     }
 
     public void testDateRangeBoundaries() throws IOException {
@@ -270,7 +269,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
                 "        }\n" +
                 "    }\n" +
                 "}\n";
-        Query parsedQuery = parseQuery(query).toQuery(createShardContext()).rewrite(null);
+        Query parsedQuery = parseQuery(query).toQuery(createShardContext());
         assertThat(parsedQuery, either(instanceOf(LegacyNumericRangeQuery.class)).or(instanceOf(PointRangeQuery.class)));
         if (parsedQuery instanceof LegacyNumericRangeQuery) {
             LegacyNumericRangeQuery rangeQuery = (LegacyNumericRangeQuery) parsedQuery;
@@ -297,7 +296,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
                 "        }\n" +
                 "    }\n" +
                 "}";
-        parsedQuery = parseQuery(query).toQuery(createShardContext()).rewrite(null);
+        parsedQuery = parseQuery(query).toQuery(createShardContext());
         assertThat(parsedQuery, either(instanceOf(LegacyNumericRangeQuery.class)).or(instanceOf(PointRangeQuery.class)));
         if (parsedQuery instanceof LegacyNumericRangeQuery) {
             LegacyNumericRangeQuery rangeQuery = (LegacyNumericRangeQuery) parsedQuery;
@@ -330,7 +329,7 @@ public class RangeQueryBuilderTests extends AbstractQueryTestCase<RangeQueryBuil
                 "    }\n" +
                 "}";
         QueryShardContext context = createShardContext();
-        Query parsedQuery = parseQuery(query).toQuery(context).rewrite(null);
+        Query parsedQuery = parseQuery(query).toQuery(context);
         if (parsedQuery instanceof PointRangeQuery) {
             // TODO what can we assert
         } else {
